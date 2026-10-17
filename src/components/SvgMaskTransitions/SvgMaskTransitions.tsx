@@ -755,10 +755,31 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             {/* Brand + location eyebrow, same pattern as Peter Leonard Marine's hero -- real
                 on-page text (not an image), reinforcing the same brand/location keywords
                 as the <title>/meta tags for consistency. */}
-            <p className="font-sf w-full max-w-[420px] sm:max-w-[500px] md:max-w-[580px] lg:max-w-[665px] xl:max-w-[750px] 2xl:max-w-[800px] -translate-y-[10%] text-center text-xl sm:text-2xl md:text-3xl tracking-[0.2em] sm:tracking-[0.3em] font-semibold uppercase flex flex-wrap justify-center gap-y-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+            {/* Width ladder here is the logo's own ladder scaled to ~76% --
+                the logo PNG has sizeable transparent padding baked in, so
+                its actual VISIBLE wordmark only fills about 76% of the
+                <img>'s declared box (confirmed by sampling the PNG's alpha
+                channel) -- matching this text to that real visible width,
+                not the image tag's nominal one. */}
+            {/* Negative margin here, not a small translate -- the logo PNG
+                has ~114px of transparent padding below its visible
+                wordmark (measured via alpha-channel sampling), so the
+                real gap down to this text was ~200px even though the
+                img tag's own box only implies ~85px. Pulled up to sit as
+                a genuine tight subtitle under the visible logo, not the
+                image file's padded box. */}
+            <p className="font-sf w-full max-w-[320px] sm:max-w-[380px] md:max-w-[440px] lg:max-w-[505px] xl:max-w-[570px] 2xl:max-w-[610px] mx-auto mt-[-93px] sm:mt-[-111px] md:mt-[-130px] lg:mt-[-142px] xl:mt-[-173px] 2xl:mt-[-179px] text-center text-[15px] sm:text-[18px] md:text-[21px] lg:text-[23px] xl:text-[28px] 2xl:text-[29px] tracking-[0.08em] sm:tracking-[0.1em] font-semibold uppercase flex flex-nowrap items-baseline justify-center whitespace-nowrap drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
               <span className="text-white">Extreme Trailers</span>
               <span className="text-white/40 mx-3">&bull;</span>
-              <span className="text-[#D5FF37]">Southampton</span>
+              {/* Warm honey-gold, not the site's usual lime accent -- lime is
+                  cool-leaning (chartreuse) and sits in near-clash against a
+                  warm sunset photo's oranges; this warm gold is analogous
+                  to the photo's own color temperature instead of fighting
+                  it. Same reasoning Pete's site already uses its own gold
+                  (#a8863f) for exactly this role -- a location word over a
+                  photographic hero -- tuned brighter here since this is
+                  always over a photo, not a plain background. */}
+              <span className="text-[#E8B84B]">Southampton</span>
             </p>
           </div>
 

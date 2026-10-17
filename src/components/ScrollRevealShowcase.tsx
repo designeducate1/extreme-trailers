@@ -52,26 +52,15 @@ export const ScrollRevealShowcase: React.FC = () => {
   const archRef = useRef<HTMLDivElement | null>(null);
   const rightRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isMuted, setIsMuted] = React.useState(false);
+  // Muted by default here -- unlike boats-of-dreams' video banner
+  // (js/boats.js), which tries sound-on first. This site's explicit
+  // choice is the opposite: stay silent until the visitor deliberately
+  // unmutes via the button below. Muted autoplay is never blocked by
+  // browsers, so no play()/catch fallback dance is needed either.
+  const [isMuted, setIsMuted] = React.useState(true);
 
-  // Same pattern as boats-of-dreams' video banner (js/boats.js): sound-on
-  // is the intended default, but browsers block unmuted autoplay without
-  // a prior user gesture (a page load isn't one) -- so this tries to
-  // play with sound first and only falls back to muted (still playing,
-  // just silently) if that's refused, rather than risk the video just
-  // sitting frozen on load.
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const playPromise = video.play();
-    if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {
-        video.muted = true;
-        setIsMuted(true);
-        video.play().catch(() => {});
-      });
-    }
+    videoRef.current?.play().catch(() => {});
   }, []);
 
   const toggleMute = () => {

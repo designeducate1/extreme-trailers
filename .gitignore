@@ -10,3 +10,6 @@ coverage/
 # AI Studio's own internal editing cache -- not referenced by any
 # source file, just scratch space from the editor session.
 .aistudio/
+
+# Local Netlify folder
+.netlify
