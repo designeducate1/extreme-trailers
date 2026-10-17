@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# AI Studio's own internal editing cache -- not referenced by any
+# source file, just scratch space from the editor session.
+.aistudio/

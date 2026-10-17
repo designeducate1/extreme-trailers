@@ -1,0 +1,6 @@
+{
+  "name": "SVG Mask Transitions & Real-Time Task Manager",
+  "description": "On-scroll SVG mask transitions with GSAP and ScrollTrigger alongside a real-time collaborative drag-and-drop task manager.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,883 @@
+@import "tailwindcss";
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+
+:root {
+  --color-link: #ffffffb7;
+  --color-link-hover: #fff;
+  --page-padding: 3vw;
+}
+
+/* SF Pro / San Francisco Apple Typography */
+.font-sf {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'San Francisco', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Codrops Display Typography */
+.font-editorial {
+  font-family: 'Playfair Display', 'Shippori Mincho', serif;
+}
+
+.font-sans-ui {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Custom Sleek Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Stage & Layers CSS from Codrops */
+.stage {
+  height: 400vh;
+  position: relative;
+}
+
+.layers {
+  position: sticky;
+  top: 4rem;
+  width: 100vw;
+  height: calc(100vh - 4rem);
+  overflow: hidden;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.layer image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.texts {
+  padding: 3vw;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.txt {
+  position: absolute;
+  width: 100%;
+  color: #fff;
+  text-transform: uppercase;
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(40px);
+  pointer-events: none;
+}
+
+.txt h1 {
+  margin-top: 10vh;
+  font-size: clamp(3.8rem, 6.2vw, 11rem);
+  letter-spacing: -0.025em;
+  line-height: 0.88;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'San Francisco', system-ui, sans-serif;
+}
+
+.txt h2 {
+  margin-top: 5vw;
+  font-size: clamp(1.2rem, 1.05vw, 1.6rem);
+  letter-spacing: 0.24em;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'San Francisco', system-ui, sans-serif;
+  opacity: 0.85;
+}
+
+.txt span {
+  display: block;
+  font-size: clamp(1rem, 0.8vw, 1.15rem);
+  max-width: 480px;
+  width: 35%;
+  margin-top: 24px;
+  line-height: 1.8;
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'SF Pro', 'San Francisco', system-ui, sans-serif;
+  opacity: 0.85;
+}
+
+@media screen and (max-width: 1024px) {
+  .txt span {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .txt span {
+    width: 85%;
+  }
+}
+
+/* Progress bar */
+.progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 3rem 4rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.segment-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.segment-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  transition: width 0.05s linear;
+}
+
+/* Spacer sections */
+.spacer-section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 30vh 1.5rem 6rem;
+  font-family: system-ui, sans-serif;
+  color: #fff;
+}
+
+.spacer-section h1 {
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  font-weight: 300;
+}
+
+.spacer-section h1 span {
+  opacity: 0.6;
+  font-size: clamp(1.4rem, 2.2vw, 2.4rem);
+}
+
+.scroll-indicator-stem {
+  max-width: 22ch;
+  opacity: 0.6;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  position: relative;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.scroll-indicator-stem::after {
+  content: '';
+  width: 1px;
+  height: 2.5rem;
+  background: #fff;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  opacity: 0.7;
+}
+
+/* ------- Cyber Radio Group from Uiverse.io by rubyreapergaming (Adapted to Logo Blue) ------- */
+.cyber-nav-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cyber-nav-group .radio-wrapper {
+  position: relative;
+  height: 38px;
+  width: 104px;
+  margin: 3px;
+}
+
+.cyber-nav-group .radio-wrapper .input {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+}
+
+.cyber-nav-group .btn {
+  --primary: #062e69;
+  --shadow-primary: #021430;
+  --color: #ffffff;
+  --font-size: 8.5px;
+  --shadow-primary-hue: 220;
+  --shadow-secondary-hue: 210;
+  --shadow-secondary: #000000;
+  --clip: polygon(
+    11% 0,
+    95% 0,
+    100% 25%,
+    90% 90%,
+    95% 90%,
+    85% 90%,
+    85% 100%,
+    7% 100%,
+    0 80%
+  );
+  --border: 4px;
+  --shimmy-distance: 5;
+  --clip-one: polygon(
+    0 2%,
+    100% 2%,
+    100% 95%,
+    95% 95%,
+    95% 90%,
+    85% 90%,
+    85% 95%,
+    8% 95%,
+    0 70%
+  );
+  --clip-two: polygon(
+    0 78%,
+    100% 78%,
+    100% 100%,
+    95% 100%,
+    95% 90%,
+    85% 90%,
+    85% 100%,
+    8% 100%,
+    0 78%
+  );
+  --clip-three: polygon(
+    0 44%,
+    100% 44%,
+    100% 54%,
+    95% 54%,
+    95% 54%,
+    85% 54%,
+    85% 54%,
+    8% 54%,
+    0 54%
+  );
+  --clip-four: polygon(
+    0 0,
+    100% 0,
+    100% 0,
+    95% 0,
+    95% 0,
+    85% 0,
+    85% 0,
+    8% 0,
+    0 0
+  );
+  --clip-five: polygon(
+    0 0,
+    100% 0,
+    100% 0,
+    95% 0,
+    95% 0,
+    85% 0,
+    85% 0,
+    8% 0,
+    0 0
+  );
+  --clip-six: polygon(
+    0 40%,
+    100% 40%,
+    100% 85%,
+    95% 85%,
+    95% 85%,
+    85% 85%,
+    85% 85%,
+    8% 85%,
+    0 70%
+  );
+  --clip-seven: polygon(
+    0 63%,
+    100% 63%,
+    100% 80%,
+    95% 80%,
+    95% 80%,
+    85% 80%,
+    85% 80%,
+    8% 80%,
+    0 70%
+  );
+  color: var(--color);
+  text-transform: uppercase;
+  font-size: var(--font-size);
+  letter-spacing: 2px;
+  position: relative;
+  font-weight: 900;
+  width: 100%;
+  height: 100%;
+  line-height: 38px;
+  text-align: center;
+  transition: background 0.2s, 0.3s;
+  font-family: "Orbitron", sans-serif;
+  user-select: none;
+}
+
+.cyber-nav-group .input:checked + .btn {
+  --primary: #0a3d82;
+  --shadow-primary: #38bdf8;
+  color: #38bdf8;
+}
+
+.cyber-nav-group .input:hover + .btn {
+  --primary: #1d4ed8;
+  --font-size: 9.5px;
+}
+
+.cyber-nav-group .btn:after,
+.cyber-nav-group .btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  clip-path: var(--clip);
+  z-index: -1;
+}
+
+.cyber-nav-group .btn:before {
+  background: var(--shadow-primary);
+  transform: translate(var(--border), 0);
+}
+
+.cyber-nav-group .btn:after {
+  background: var(--primary);
+}
+
+.cyber-nav-group .btn__tag {
+  position: absolute;
+  padding: 1px 4px;
+  letter-spacing: 1px;
+  line-height: 1;
+  bottom: -5%;
+  right: 5%;
+  font-weight: normal;
+  color: hsl(0, 0%, 0%);
+  font-size: 6px;
+}
+
+.cyber-nav-group .btn__glitch {
+  position: absolute;
+  top: calc(var(--border) * -1);
+  left: calc(var(--border) * -1);
+  right: calc(var(--border) * -1);
+  bottom: calc(var(--border) * -1);
+  background: var(--shadow-primary);
+  text-shadow: 2px 2px var(--shadow-primary), -2px -2px var(--shadow-secondary);
+  clip-path: var(--clip);
+  animation: cyber-glitch 2s infinite;
+  display: none;
+}
+
+.cyber-nav-group .input:hover + .btn .btn__glitch {
+  display: block;
+}
+
+.cyber-nav-group .input:checked + .btn .btn__glitch {
+  display: block;
+  animation: cyber-glitch 4s infinite;
+}
+
+.cyber-nav-group .btn__glitch:before {
+  content: "";
+  position: absolute;
+  top: calc(var(--border) * 1);
+  right: calc(var(--border) * 1);
+  bottom: calc(var(--border) * 1);
+  left: calc(var(--border) * 1);
+  clip-path: var(--clip);
+  background: var(--primary);
+  z-index: -1;
+}
+
+@keyframes cyber-glitch {
+  0% {
+    clip-path: var(--clip-one);
+  }
+
+  2%,
+  8% {
+    clip-path: var(--clip-two);
+    transform: translate(calc(var(--shimmy-distance) * -1%), 0);
+  }
+
+  6% {
+    clip-path: var(--clip-two);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  9% {
+    clip-path: var(--clip-two);
+    transform: translate(0, 0);
+  }
+
+  10% {
+    clip-path: var(--clip-three);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  13% {
+    clip-path: var(--clip-three);
+    transform: translate(0, 0);
+  }
+
+  14%,
+  21% {
+    clip-path: var(--clip-four);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  25% {
+    clip-path: var(--clip-five);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  30% {
+    clip-path: var(--clip-five);
+    transform: translate(calc(var(--shimmy-distance) * -1%), 0);
+  }
+
+  35%,
+  45% {
+    clip-path: var(--clip-six);
+    transform: translate(calc(var(--shimmy-distance) * -1%), 0);
+  }
+
+  40% {
+    clip-path: var(--clip-six);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  50% {
+    clip-path: var(--clip-six);
+    transform: translate(0, 0);
+  }
+
+  55% {
+    clip-path: var(--clip-seven);
+    transform: translate(calc(var(--shimmy-distance) * 1%), 0);
+  }
+
+  60% {
+    clip-path: var(--clip-seven);
+    transform: translate(0, 0);
+  }
+
+  31%,
+  61%,
+  100% {
+    clip-path: var(--clip-four);
+  }
+}
+
+.cyber-nav-group .number {
+  background: var(--shadow-primary);
+  color: #38bdf8;
+  font-size: 5.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  position: absolute;
+  width: 15px;
+  height: 6px;
+  top: 0;
+  left: 81%;
+  line-height: 6.2px;
+}
+
+/* ========================================================
+   Banner Navigation - Uiverse.io by GustavoAlmeidaPuff
+   White framing moving bars interactive effect
+   ======================================================== */
+.banner-nav-wrap {
+  --round: 8px;
+  --p-x: 5px;
+  --p-y: 3px;
+  --w-label: 116px;
+  --color-secondary: #062e69;
+  --color-pure: #062e69;
+  --muted: rgba(6, 46, 105, 0.15);
+  display: flex;
+  align-items: center;
+  padding: var(--p-y) var(--p-x);
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(6, 46, 105, 0.15);
+  border-radius: var(--round);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  z-index: 10;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 1200px) {
+  .banner-nav-wrap {
+    --w-label: 104px;
+  }
+}
+
+@media (max-width: 960px) {
+  .banner-nav-wrap {
+    --w-label: 92px;
+  }
+}
+
+@media (max-width: 640px) {
+  .banner-nav-wrap {
+    --w-label: 80px;
+  }
+}
+
+.banner-nav-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.banner-nav-wrap input[type="radio"] {
+  height: 0;
+  width: 0;
+  position: absolute;
+  overflow: hidden;
+  display: none;
+  visibility: hidden;
+}
+
+.banner-nav-wrap .label {
+  cursor: pointer;
+  outline: none;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  color: #062e69;
+  background: transparent;
+  padding: 7px 4px;
+  width: var(--w-label);
+  min-width: var(--w-label);
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: color 0.25s ease, opacity 0.25s ease;
+  outline-offset: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+  text-transform: uppercase;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  opacity: 0.8;
+}
+
+@media (max-width: 1200px) {
+  .banner-nav-wrap .label {
+    font-size: 0.65rem;
+    letter-spacing: 0.03em;
+    padding: 6px 2px;
+  }
+}
+
+@media (max-width: 960px) {
+  .banner-nav-wrap .label {
+    font-size: 0.58rem;
+    letter-spacing: 0.02em;
+    padding: 5px 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  .banner-nav-wrap .label {
+    font-size: 0.52rem;
+    letter-spacing: 0.01em;
+    padding: 4px 1px;
+  }
+}
+
+.banner-nav-wrap .label span {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.banner-nav-wrap input[class*="rd-"]:checked + .label {
+  color: #062e69;
+  opacity: 1;
+  font-weight: 900;
+}
+
+.banner-nav-wrap .label:hover {
+  color: #062e69;
+  opacity: 1;
+}
+
+/* Blue Framing Bar (inversed from white to extreme blue) */
+.banner-nav-wrap .bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: var(--p-x);
+  transform-origin: 0 0 0;
+  height: 100%;
+  width: var(--w-label);
+  z-index: 1;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.33, 0.83, 0.99, 0.98);
+}
+
+.banner-nav-wrap .bar::before,
+.banner-nav-wrap .bar::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #062e69;
+  box-shadow: 0 0 6px rgba(6, 46, 105, 0.35), 0 0 12px rgba(6, 46, 105, 0.18);
+}
+
+.banner-nav-wrap .bar::before {
+  top: 0;
+  border-radius: 0 0 9999px 9999px;
+}
+
+.banner-nav-wrap .bar::after {
+  bottom: 0;
+  border-radius: 9999px 9999px 0 0;
+}
+
+/* Background slide highlight - interactive scroll bar: soft blue with transparency */
+.banner-nav-wrap .slidebar {
+  position: absolute;
+  top: var(--p-y);
+  left: var(--p-x);
+  height: calc(100% - (var(--p-y) * 2));
+  width: var(--w-label);
+  border-radius: calc(var(--round) - var(--p-y));
+  background: rgba(6, 46, 105, 0.08);
+  border: 1px solid rgba(6, 46, 105, 0.18);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 12px rgba(6, 46, 105, 0.08);
+  transform-origin: 0 0 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.33, 0.83, 0.99, 0.98);
+}
+
+/* Fallback pure CSS selectors */
+.banner-nav-wrap .rd-1:checked ~ .bar,
+.banner-nav-wrap .rd-1:checked ~ .slidebar {
+  transform: translateX(0);
+}
+.banner-nav-wrap .rd-2:checked ~ .bar,
+.banner-nav-wrap .rd-2:checked ~ .slidebar {
+  transform: translateX(100%);
+}
+.banner-nav-wrap .rd-3:checked ~ .bar,
+.banner-nav-wrap .rd-3:checked ~ .slidebar {
+  transform: translateX(200%);
+}
+.banner-nav-wrap .rd-4:checked ~ .bar,
+.banner-nav-wrap .rd-4:checked ~ .slidebar {
+  transform: translateX(300%);
+}
+.banner-nav-wrap .rd-5:checked ~ .bar,
+.banner-nav-wrap .rd-5:checked ~ .slidebar {
+  transform: translateX(400%);
+}
+.banner-nav-wrap .rd-6:checked ~ .bar,
+.banner-nav-wrap .rd-6:checked ~ .slidebar {
+  transform: translateX(500%);
+}
+.banner-nav-wrap .rd-7:checked ~ .bar,
+.banner-nav-wrap .rd-7:checked ~ .slidebar {
+  transform: translateX(600%);
+}
+
+.banner-nav-wrap .rd-1 + .label:hover ~ .slidebar { transform: translateX(0); }
+.banner-nav-wrap .rd-2 + .label:hover ~ .slidebar { transform: translateX(100%); }
+.banner-nav-wrap .rd-3 + .label:hover ~ .slidebar { transform: translateX(200%); }
+.banner-nav-wrap .rd-4 + .label:hover ~ .slidebar { transform: translateX(300%); }
+.banner-nav-wrap .rd-5 + .label:hover ~ .slidebar { transform: translateX(400%); }
+.banner-nav-wrap .rd-6 + .label:hover ~ .slidebar { transform: translateX(500%); }
+.banner-nav-wrap .rd-7 + .label:hover ~ .slidebar { transform: translateX(600%); }
+
+/* From Uiverse.io by Bodyhc - Microphone switch interaction */
+.checkbox-wrapper-35 .switch {
+  display: none;
+}
+
+.checkbox-wrapper-35 .switch + label {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 15px;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.checkbox-wrapper-35 .switch + label::before,
+.checkbox-wrapper-35 .switch + label::after {
+  content: '';
+  display: block;
+}
+
+.checkbox-wrapper-35 .switch + label::before {
+  background-color: #05012c;
+  border-radius: 500px;
+  height: 15px;
+  margin-right: 8px;
+  -webkit-transition: background-color 0.125s ease-out;
+  transition: background-color 0.125s ease-out;
+  width: 25px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.checkbox-wrapper-35 .switch + label::after {
+  background-color: #fff;
+  border-radius: 13px;
+  box-shadow: 0 3px 1px 0 rgba(37, 34, 71, 0.05), 0 2px 2px 0 rgba(37, 34, 71, 0.1), 0 3px 3px 0 rgba(37, 34, 71, 0.05);
+  height: 13px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  -webkit-transition: -webkit-transform 0.125s ease-out;
+  transition: -webkit-transform 0.125s ease-out;
+  transition: transform 0.125s ease-out;
+  transition: transform 0.125s ease-out, -webkit-transform 0.125s ease-out;
+  width: 13px;
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-text {
+  display: block;
+  margin-right: .3em;
+  opacity: 0.8;
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-toggletext {
+  display: block;
+  font-weight: bold;
+  height: 15px;
+  overflow: hidden;
+  position: relative;
+  width: 25px;
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-unchecked,
+.checkbox-wrapper-35 .switch + label .switch-x-checked {
+  left: 0;
+  position: absolute;
+  top: 0;
+  -webkit-transition: opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+  transition: opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+  transition: transform 0.125s ease-out, opacity 0.125s ease-out;
+  transition: transform 0.125s ease-out, opacity 0.125s ease-out, -webkit-transform 0.125s ease-out;
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-unchecked {
+  opacity: 1;
+  -webkit-transform: none;
+  transform: none;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-checked {
+  opacity: 0;
+  -webkit-transform: translate3d(0, 100%, 0);
+  transform: translate3d(0, 100%, 0);
+  color: #60a5fa;
+}
+
+.checkbox-wrapper-35 .switch + label .switch-x-hiddenlabel {
+  position: absolute;
+  visibility: hidden;
+}
+
+.checkbox-wrapper-35 .switch:checked + label::before {
+  background-color: #062e69;
+  box-shadow: 0 0 6px rgba(6, 46, 105, 0.6);
+}
+
+.checkbox-wrapper-35 .switch:checked + label::after {
+  -webkit-transform: translate3d(10px, 0, 0);
+  transform: translate3d(10px, 0, 0);
+}
+
+.checkbox-wrapper-35 .switch:checked + label .switch-x-unchecked {
+  opacity: 0;
+  -webkit-transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, -100%, 0);
+}
+
+.checkbox-wrapper-35 .switch:checked + label .switch-x-checked {
+  opacity: 1;
+  -webkit-transform: none;
+  transform: none;
+}
+
+/* Light-glass variant -- the switch's text/track colors above assume a
+   dark/photo background (white text); this overrides them for the
+   frosted-white glass-light theme (SlitherNavPanel.tsx) so the label
+   and track stay readable against light glass instead of disappearing. */
+.checkbox-wrapper-35--light .switch + label {
+  color: rgba(15, 23, 42, 0.75);
+}
+
+.checkbox-wrapper-35--light .switch + label::before {
+  background-color: rgba(15, 23, 42, 0.18);
+  box-shadow: inset 0 0 4px rgba(15, 23, 42, 0.15);
+}
+
+.checkbox-wrapper-35--light .switch + label .switch-x-unchecked {
+  color: rgba(15, 23, 42, 0.55);
+}
+
