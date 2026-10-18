@@ -20,6 +20,14 @@ export default function App() {
     setViewMode(viewMode === 'task-manager' ? 'svg-transitions' : 'task-manager');
   };
 
+  // Shared by MenuBanner's own nav item and the homepage lozenge (see
+  // SvgMaskTransitions) -- same destination, same handler, so both stay
+  // in sync automatically rather than each having their own copy.
+  const handleGoToTrailerRange = () => {
+    setViewMode('trailer-range');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-black text-white antialiased">
       {/* Menu Banner matching user-provided design */}
@@ -28,10 +36,7 @@ export default function App() {
           setViewMode('svg-transitions');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onTrailerRangeClick={() => {
-          setViewMode('trailer-range');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onTrailerRangeClick={handleGoToTrailerRange}
         onOpenTaskManager={handleOpenTaskManager}
       />
 
@@ -41,6 +46,7 @@ export default function App() {
           <SvgMaskTransitions
             initialVariation={activeVariation}
             onOpenTaskManager={handleOpenTaskManager}
+            onTrailerRangeClick={handleGoToTrailerRange}
           />
         )}
 

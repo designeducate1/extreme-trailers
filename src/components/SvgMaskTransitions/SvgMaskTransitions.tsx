@@ -14,11 +14,13 @@ export type VariationType = 'horizontal-blinds' | 'random-grid' | 'vertical-blin
 interface SvgMaskTransitionsProps {
   initialVariation?: VariationType;
   onOpenTaskManager?: () => void;
+  onTrailerRangeClick?: () => void;
 }
 
 export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
   initialVariation = 'horizontal-blinds',
   onOpenTaskManager,
+  onTrailerRangeClick,
 }) => {
   const [variation, setVariation] = useState<VariationType>(initialVariation);
   const [blindCount, setBlindCount] = useState<number>(30);
@@ -850,7 +852,12 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
 
           {/* Personal AI Concierge Lozenge just below the sentence */}
           <div className="w-full flex justify-center">
-            <SlitherNavPanel idPrefix="interstitial" theme="glass-light" />
+            <SlitherNavPanel
+              idPrefix="interstitial"
+              theme="glass-light"
+              variant="button"
+              onClick={onTrailerRangeClick}
+            />
           </div>
         </div>
       </section>
