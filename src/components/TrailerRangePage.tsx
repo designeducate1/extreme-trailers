@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrailerConfiguratorPanel } from './TrailerConfiguratorPanel';
-import { SlitherNavPanel } from './SlitherNavPanel';
+import { GooeyConciergeButton } from './GooeyConciergeButton';
 import bannerLogo from '../assets/extreme-logo-banner.png';
 
 interface TrailerRangePageProps {
@@ -16,17 +16,18 @@ interface TrailerRangePageProps {
 export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }) => {
   return (
     <div className="relative z-20 w-full min-h-screen bg-white">
-      {/* Page header: logo, then the lozenge in its original toggle form
-          -- this one is a genuine on/off state (unlike the homepage's
-          button variant), reserved for the real Ultravox "Ross" voice
-          assistant once it's built. Switching it on does nothing yet. */}
+      {/* Page header: logo, then the gooey-splitting concierge pill.
+          Clicking it relabels to "Live AI Concierge" and breaks away a
+          chat-bubble droplet -- both reserved for the future Ultravox
+          "Ross" voice assistant and its text-chat fallback; neither is
+          wired up to anything real yet. */}
       <div className="w-full flex flex-col items-center gap-4 pt-16 pb-10 px-6 bg-white">
         <img
           src={bannerLogo}
           alt="Extreme Marine"
           className="h-[48px] sm:h-[56px] md:h-[64px] w-auto object-contain"
         />
-        <SlitherNavPanel idPrefix="trailer-range" theme="glass-light" />
+        <GooeyConciergeButton />
       </div>
 
       <TrailerConfiguratorPanel />
