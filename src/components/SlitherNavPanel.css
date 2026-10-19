@@ -1,0 +1,67 @@
+/* Ported from https://uiverse.io/Navarog21 for SlitherNavPanel's
+   chrome="line" variant: a rounded panel with a ridge border, two bars
+   covering most of the top/bottom border by default, and a glow +
+   bar-retract reveal on hover.
+
+   Two deliberate departures from the original snippet:
+   - The border colour is the real Extreme Marine brand blue (#062e69,
+     already used as --primary elsewhere in this project -- see
+     src/index.css), not the placeholder cyan (#149CEA) from the demo.
+   - The bars and button face share one fill colour (set via
+     --line-fill), and the button clips its own overflow. The original
+     only "erased" the border cleanly because its demo page happened to
+     share the bars' dark colour; on an arbitrary page background that
+     trick breaks, so here the bars match the button's own face instead
+     of the page behind it. */
+
+.brand-line-btn {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  border: 3px ridge var(--line-color, #062e69);
+  outline: none;
+  background-color: var(--line-fill, #1d1d1f);
+  color: #fff;
+  border-radius: var(--line-radius, 18px);
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, transform 0.15s ease;
+}
+
+.brand-line-btn:active {
+  transform: scale(0.98);
+}
+
+.brand-line-btn::after,
+.brand-line-btn::before {
+  content: '';
+  position: absolute;
+  left: 3%;
+  width: 95%;
+  height: 42%;
+  background-color: var(--line-fill, #1d1d1f);
+  transition: transform 0.5s ease;
+  transform-origin: center;
+}
+
+.brand-line-btn::after {
+  top: -4%;
+}
+
+.brand-line-btn::before {
+  top: 62%;
+}
+
+.brand-line-btn:hover::before,
+.brand-line-btn:hover::after {
+  transform: scale(0);
+}
+
+.brand-line-btn:hover {
+  box-shadow: inset 0 0 28px var(--line-glow, rgba(6, 46, 105, 0.6));
+}

@@ -858,6 +858,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
               idPrefix="interstitial"
               theme="glass-light"
               variant="button"
+              chrome="line"
               onClick={onTrailerRangeClick}
               label="Launch AI Trailer Builder"
               width={460}

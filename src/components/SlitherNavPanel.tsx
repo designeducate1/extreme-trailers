@@ -1,5 +1,6 @@
 import React from 'react';
 import { LiquidGlassCard } from '@/components/ui/liquid-glass';
+import './SlitherNavPanel.css';
 
 interface SlitherNavPanelProps {
   onBuilderClick?: () => void;
@@ -21,6 +22,11 @@ interface SlitherNavPanelProps {
   width?: number;
   height?: number;
   fontSize?: number;
+  /** 'glass' (default) is the original LiquidGlassCard look. 'line' is
+   *  the Uiverse-ported ridge-border panel with animated erase bars --
+   *  only meaningful when variant="button"; ignored for the toggle,
+   *  which always keeps its glass look. */
+  chrome?: 'glass' | 'line';
 }
 
 export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
@@ -32,10 +38,12 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
   width = 342,
   height = 64.5,
   fontSize = 15,
+  chrome = 'glass',
 }) => {
   const switchId = `${idPrefix}-switch`;
   const isButton = variant === 'button';
   const iconSize = Math.round((fontSize / 15) * 14);
+  const isLineChrome = isButton && chrome === 'line';
 
   const cardClassName = `w-full h-full px-5 py-2 flex flex-col items-center justify-center gap-1 transition-all text-center ${
     theme === 'dark'
@@ -105,7 +113,29 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
       style={{ width: `${width}px`, height: `${height}px` }}
       className="max-w-full mx-auto pointer-events-auto flex justify-center items-center"
     >
-      {isButton ? (
+      {isLineChrome ? (
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label={`${label} -- go to Trailer Range`}
+          className="brand-line-btn"
+          style={
+            {
+              '--line-color': '#062e69',
+              '--line-fill': '#1d1d1f',
+              '--line-glow': 'rgba(6, 46, 105, 0.6)',
+              '--line-radius': `${Math.min(height / 4, 22)}px`,
+              fontFamily: 'Verdana, Geneva, sans-serif',
+              fontSize: `${fontSize}px`,
+            } as React.CSSProperties
+          }
+        >
+          {label}
+          <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+      ) : isButton ? (
         <button
           type="button"
           onClick={onClick}
