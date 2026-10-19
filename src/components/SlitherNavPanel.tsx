@@ -122,18 +122,18 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
           style={
             {
               '--line-color': '#062e69',
-              '--line-fill': '#1d1d1f',
-              '--line-glow': 'rgba(6, 46, 105, 0.6)',
               '--line-radius': `${Math.min(height / 4, 22)}px`,
               fontFamily: 'Verdana, Geneva, sans-serif',
               fontSize: `${fontSize}px`,
             } as React.CSSProperties
           }
         >
-          {label}
-          <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+          <span className="brand-line-btn__label">
+            {label}
+            <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </span>
         </button>
       ) : isButton ? (
         <button
