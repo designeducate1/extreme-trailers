@@ -1,90 +1,89 @@
-/* Ported from https://uiverse.io/Navarog21 for SlitherNavPanel's
-   chrome="line" variant: a rounded panel with a ridge border, two bars
-   covering most of the top/bottom border by default, and a glow +
-   bar-retract reveal on hover.
+/* Ported from https://uiverse.io/vinodjangid07 for SlitherNavPanel's
+   chrome="expand" variant: a circular icon button that expands into a
+   pill on hover, revealing its label, then collapses back on mouse
+   leave.
 
-   Reworked as Apple-style liquid glass (translucent, backdrop-blurred,
-   specular sheen) rather than a flat dark fill, so the brand-blue
-   border reads clearly at rest and black text stays legible. The two
-   hide/reveal bars are themselves blurred translucent glass segments
-   (not a flat colour swatch) -- on a genuinely glassy, highlight-
-   textured surface, a flat-colour bar would look like a pasted-on
-   patch rather than part of the material; matching the blur/opacity
-   instead of an exact flat colour is what makes it still read as "the
-   glass" covering those border segments. */
+   Two departures from the original demo:
+   - Recoloured to the real Extreme Marine brand blue (#062e69, already
+     used as --primary elsewhere in this project -- see src/index.css)
+     in place of the demo's red.
+   - Scaled up from the demo's 65px/160px sizing, which was tuned for a
+     12-character placeholder ("AI assistant"). This button's actual
+     label is longer, so the rest size and hover width are set wider
+     (via --fab-* custom properties, configurable per instance) so the
+     full label fits without wrapping or clipping. */
 
-.brand-line-btn {
+.brand-fab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: var(--fab-size, 84px);
+  height: var(--fab-size, 84px);
+  /* Sits inside a flex-centered wrapper sized to the resting circle --
+     without this, flexbox's default flex-shrink:1 quietly overrides the
+     hover width rule below, shrinking the button back to fit the
+     wrapper instead of expanding past it. */
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
   position: relative;
+  overflow: hidden;
+  transition: width 0.35s ease, border-radius 0.35s ease;
+  box-shadow:
+    0 10px 28px rgba(6, 46, 105, 0.35),
+    2px 2px 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--fab-color, #062e69);
+}
+
+.brand-fab-btn__icon {
   width: 100%;
   height: 100%;
-  display: inline-flex;
+  flex-shrink: 0;
+  transition: width 0.35s ease, padding 0.35s ease;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px ridge var(--line-color, #062e69);
-  outline: none;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.36) 100%);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  color: #18181b;
-  border-radius: var(--line-radius, 18px);
-  font-weight: bold;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow:
-    0 14px 40px rgba(6, 46, 105, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
-  transition: box-shadow 0.4s ease, transform 0.15s ease;
 }
 
-.brand-line-btn:active {
-  transform: scale(0.98);
+.brand-fab-btn__icon svg {
+  width: var(--fab-icon-size, 22px);
+  height: var(--fab-icon-size, 22px);
 }
 
-.brand-line-btn__label {
-  position: relative;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
+.brand-fab-btn__icon svg path {
+  fill: #fff;
 }
 
-.brand-line-btn::after,
-.brand-line-btn::before {
-  content: '';
+.brand-fab-btn__text {
   position: absolute;
-  left: 3%;
-  width: 95%;
-  height: 42%;
-  z-index: 2;
-  /* Noticeably denser frost than the panel's own base tint (0.36-0.7
-     above) -- the bars need real opacity, not just blur, to actually
-     suppress the border colour underneath at rest. A merely translucent
-     bar still lets the blue bleed through, so the border never visibly
-     breaks and the whole hide/reveal motion goes unnoticed. */
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.88) 100%);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  transform-origin: center;
-}
-
-.brand-line-btn::after {
-  top: -4%;
-}
-
-.brand-line-btn::before {
-  top: 62%;
-}
-
-.brand-line-btn:hover::before,
-.brand-line-btn:hover::after {
-  transform: scale(0);
+  right: 0;
+  width: 0;
   opacity: 0;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+  transition: width 0.35s ease, opacity 0.35s ease, padding 0.35s ease;
 }
 
-.brand-line-btn:hover {
-  box-shadow:
-    inset 0 0 30px rgba(6, 46, 105, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 16px 46px rgba(6, 46, 105, 0.22);
+.brand-fab-btn:hover {
+  width: var(--fab-hover-width, 340px);
+  border-radius: var(--fab-hover-radius, 42px);
+}
+
+.brand-fab-btn:hover .brand-fab-btn__icon {
+  width: 26%;
+  padding-left: 20px;
+}
+
+.brand-fab-btn:hover .brand-fab-btn__text {
+  opacity: 1;
+  width: 74%;
+  padding-right: 18px;
+}
+
+.brand-fab-btn:active {
+  transform: translate(2px, 2px);
 }

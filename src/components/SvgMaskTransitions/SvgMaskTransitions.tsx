@@ -852,18 +852,20 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             Trailers to suit RIBs, powerboats, sail boats, dinghies and jetskis — built live with AI Ross, our voice-cloned trailer builder that finds your exact spec in 60 seconds.
           </p>
 
-          {/* Launch AI Trailer Builder lozenge just below the sentence */}
+          {/* Launch AI Trailer Builder: circular icon button that
+              expands into a pill on hover, revealing the label. */}
           <div className="w-full flex justify-center">
             <SlitherNavPanel
               idPrefix="interstitial"
               theme="glass-light"
               variant="button"
-              chrome="line"
+              chrome="expand"
               onClick={onTrailerRangeClick}
               label="Launch AI Trailer Builder"
-              width={460}
-              height={78}
-              fontSize={18}
+              width={88}
+              height={88}
+              expandedWidth={360}
+              fontSize={17}
             />
           </div>
         </div>
