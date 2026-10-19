@@ -840,23 +840,29 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
         </div>
       </section>
 
-      {/* Space of White Background with 'What can I help with?' */}
-      <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 pt-[115px] sm:pt-[154px] pb-0 px-6 flex flex-col items-center justify-center font-sf text-center">
-        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
-          <h2 className="text-3xl sm:text-4xl md:text-[2.65rem] font-bold tracking-tight text-zinc-900 font-sf mb-2.5 leading-tight">
-            What can I help with?
+      {/* Space of White Background with 'Build The Right Trailer. First Time.' */}
+      <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 pt-[140px] sm:pt-[190px] md:pt-[220px] pb-0 px-6 flex flex-col items-center justify-center font-sf text-center">
+        <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tighter text-zinc-900 font-sf mb-5 leading-[1.05]">
+            Build The Right Trailer.
+            <br />
+            First Time.
           </h2>
-          <p className="text-sm sm:text-base text-zinc-400 font-normal tracking-normal font-sf mb-8">
-            trailers to suit RIBS, powerboats, sail boats, dinghies, personal watercraft and inflatables of all sizes.
+          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-500 font-normal tracking-normal font-sf leading-relaxed mb-12">
+            Trailers to suit RIBs, powerboats, sail boats, dinghies and jetskis — built live with AI Ross, our voice-cloned trailer builder that finds your exact spec in 60 seconds.
           </p>
 
-          {/* Personal AI Concierge Lozenge just below the sentence */}
+          {/* Launch AI Trailer Builder lozenge just below the sentence */}
           <div className="w-full flex justify-center">
             <SlitherNavPanel
               idPrefix="interstitial"
               theme="glass-light"
               variant="button"
               onClick={onTrailerRangeClick}
+              label="Launch AI Trailer Builder"
+              width={460}
+              height={78}
+              fontSize={18}
             />
           </div>
         </div>

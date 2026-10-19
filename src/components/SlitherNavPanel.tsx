@@ -14,6 +14,13 @@ interface SlitherNavPanelProps {
    *  than toggling anything. */
   variant?: 'toggle' | 'button';
   onClick?: () => void;
+  /** Button-variant label text. Defaults to the original copy so the
+   *  'toggle' variant (and any future caller that doesn't pass one) is
+   *  unaffected. */
+  label?: string;
+  width?: number;
+  height?: number;
+  fontSize?: number;
 }
 
 export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
@@ -21,9 +28,14 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
   theme = 'glass',
   variant = 'toggle',
   onClick,
+  label = 'Personal AI Concierge',
+  width = 342,
+  height = 64.5,
+  fontSize = 15,
 }) => {
   const switchId = `${idPrefix}-switch`;
   const isButton = variant === 'button';
+  const iconSize = Math.round((fontSize / 15) * 14);
 
   const cardClassName = `w-full h-full px-5 py-2 flex flex-col items-center justify-center gap-1 transition-all text-center ${
     theme === 'dark'
@@ -46,18 +58,18 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
       }}
       className={cardClassName}
     >
-      {/* Words: Personal AI Concierge */}
+      {/* Button-variant label (or original toggle label) */}
       <div
-        style={{ fontSize: '15px', fontFamily: 'Verdana, Geneva, sans-serif' }}
+        style={{ fontSize: `${fontSize}px`, fontFamily: 'Verdana, Geneva, sans-serif' }}
         className={`font-bold tracking-tight text-center select-none whitespace-nowrap leading-tight flex items-center gap-2 ${
           theme === 'glass-light'
             ? 'text-zinc-900'
             : 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]'
         }`}
       >
-        Personal AI Concierge
+        {label}
         {isButton && (
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         )}
@@ -90,14 +102,14 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
 
   return (
     <div
-      style={{ width: '342px', height: '64.5px' }}
+      style={{ width: `${width}px`, height: `${height}px` }}
       className="max-w-full mx-auto pointer-events-auto flex justify-center items-center"
     >
       {isButton ? (
         <button
           type="button"
           onClick={onClick}
-          aria-label="Personal AI Concierge -- go to Trailer Range"
+          aria-label={`${label} -- go to Trailer Range`}
           className="w-full h-full"
         >
           {card}
