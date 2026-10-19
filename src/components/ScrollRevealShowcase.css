@@ -100,7 +100,12 @@
   height: 400px;
   width: 100%;
   border-radius: 16px;
-  overflow: hidden;
+  /* visible, not hidden: the depth carousel's stacked cards spread out
+     sideways from the front card -- clipping here would cut that stack
+     off at this box's edges. Each card keeps its own border-radius via
+     DepthCarousel's own CSS, so the front card's corners still read
+     cleanly even without a clipping wrapper. */
+  overflow: visible;
 }
 
 .reveal-showcase .arch__right .video-wrapper video {

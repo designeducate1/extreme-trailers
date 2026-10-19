@@ -65,6 +65,20 @@ interface DepthCarouselProps {
   showIndicators?: boolean;
   onChange?: (index: number, item: DepthCarouselItem) => void;
   className?: string;
+  /** When false, the carousel's own wheel-to-navigate gesture is disabled
+   *  so the page's own scroll (and anything relying on it, e.g. a GSAP
+   *  ScrollTrigger pin) always wins when the pointer is hovering the
+   *  carousel. Arrow/dot/click/drag navigation are unaffected -- only the
+   *  wheel listener is skipped. Defaults to true (the carousel's own
+   *  standalone behaviour). */
+  enableWheel?: boolean;
+  /** Controls whether the currently-active (front) card's video plays
+   *  with sound. Every other card always stays muted regardless of this
+   *  value -- only the front card is ever a candidate for sound, and
+   *  which physical <video> that is changes automatically as the user
+   *  navigates. Defaults to true (muted), matching autoplay-safe
+   *  behaviour out of the box. */
+  activeMuted?: boolean;
 }
 
 const DepthCarousel: React.FC<DepthCarouselProps> = ({
@@ -90,6 +104,8 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   showIndicators = true,
   onChange,
   className = '',
+  enableWheel = true,
+  activeMuted = true,
 }) => {
   const data = useMemo(() => items, [items]);
   const count = data.length;
@@ -243,7 +259,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
 
   useEffect(() => {
     const el = rootRef.current;
-    if (!el) return;
+    if (!el || !enableWheel) return;
     const onWheel = (e: WheelEvent) => {
       const cfg = cfgRef.current;
       if (cfg.count < 2) return;
@@ -262,7 +278,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
       el.removeEventListener('wheel', onWheel);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
     };
-  }, [layout, setFocus]);
+  }, [layout, setFocus, enableWheel]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     const cfg = cfgRef.current;
@@ -427,7 +443,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
               poster={item.poster}
               aria-label={item.alt || ''}
               autoPlay
-              muted
+              muted={i === active ? activeMuted : true}
               loop
               playsInline
               draggable={false}

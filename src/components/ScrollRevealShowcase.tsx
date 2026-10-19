@@ -1,7 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import DepthCarousel, { type DepthCarouselItem } from './DepthCarousel';
 import './ScrollRevealShowcase.css';
+
+// The original "Why Buy Extreme" clip stays first/front (where it always
+// was); the six behind-the-build clips stack in behind it as part of the
+// same depth carousel, in place of what used to be a single pinned
+// <video>. Order matches the source filenames' numeric prefixes.
+const SHOWCASE_CLIPS: DepthCarouselItem[] = [
+  { video: '/videos/why-buy-extreme.mp4', alt: 'Why Buy Extreme' },
+  { video: '/videos/01_Origin_2005.mp4', alt: 'Origin, 2005' },
+  { video: '/videos/02_MadeInSouthampton.mp4', alt: 'Made In Southampton' },
+  { video: '/videos/03_CNC_vs_Welded_Injection.mp4', alt: 'CNC vs Welded Injection' },
+  { video: '/videos/04_Modular_PowderCoat.mp4', alt: 'Modular Powder Coat' },
+  { video: '/videos/05_Ubolt_Protection.mp4', alt: 'U-Bolt Protection' },
+  { video: '/videos/06_DealerNetwork_IdealBoats.mp4', alt: 'Dealer Network: Ideal Boats' },
+];
 
 // gsap.registerPlugin is idempotent -- already called once in
 // SvgMaskTransitions.tsx, but harmless/cheap to ensure here too in case
@@ -51,24 +66,18 @@ export const ScrollRevealShowcase: React.FC = () => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const archRef = useRef<HTMLDivElement | null>(null);
   const rightRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   // Muted by default here -- unlike boats-of-dreams' video banner
   // (js/boats.js), which tries sound-on first. This site's explicit
   // choice is the opposite: stay silent until the visitor deliberately
   // unmutes via the button below. Muted autoplay is never blocked by
   // browsers, so no play()/catch fallback dance is needed either.
+  // This state now drives DepthCarousel's `activeMuted` prop rather than
+  // a single <video> element directly -- the carousel always applies it
+  // to whichever card is currently at the front, so the sound toggle
+  // "follows" the front clip as the visitor navigates the stack.
   const [isMuted, setIsMuted] = React.useState(true);
 
-  useEffect(() => {
-    videoRef.current?.play().catch(() => {});
-  }, []);
-
-  const toggleMute = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
-  };
+  const toggleMute = () => setIsMuted((m) => !m);
 
   useEffect(() => {
     if (!rootRef.current || !archRef.current || !rightRef.current) return;
@@ -146,14 +155,28 @@ export const ScrollRevealShowcase: React.FC = () => {
 
           <div className="arch__right" ref={rightRef}>
             <div className="video-wrapper">
-              <video
-                ref={videoRef}
-                src="/videos/why-buy-extreme.mp4"
-                autoPlay
+              <DepthCarousel
+                items={SHOWCASE_CLIPS}
+                activeMuted={isMuted}
+                enableWheel={false}
+                depth={130}
+                spread={56}
+                tilt={14}
+                tiltDirection="right"
+                perspective={1200}
+                visibleCards={3}
+                falloff={0.22}
+                blur={5}
+                autoplay={false}
                 loop
-                muted={isMuted}
-                playsInline
-                aria-label="Why Buy Extreme promotional video"
+                cardWidth={340}
+                cardHeight={200}
+                radius={16}
+                tint="#05060a"
+                duration={650}
+                ease="power3.out"
+                showControls
+                showIndicators
               />
               <button
                 type="button"

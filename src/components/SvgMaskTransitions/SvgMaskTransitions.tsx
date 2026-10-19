@@ -3,22 +3,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { ScrollRevealShowcase } from '../ScrollRevealShowcase';
-import DepthCarousel, { type DepthCarouselItem } from '../DepthCarousel';
 import { variationsData } from '../../data/sampleImages';
 import { Play, Pause, RotateCcw, Sliders, ChevronDown } from 'lucide-react';
 import { SlitherNavPanel } from '../SlitherNavPanel';
-
-// Behind-the-build clips for the depth carousel below the main "Why Buy
-// Extreme" showcase -- see next-random-grid section near the end of this
-// file. Order matches the source filenames' numeric prefixes.
-const BEHIND_THE_BUILD_CLIPS: DepthCarouselItem[] = [
-  { video: '/videos/01_Origin_2005.mp4', alt: 'Origin, 2005' },
-  { video: '/videos/02_MadeInSouthampton.mp4', alt: 'Made In Southampton' },
-  { video: '/videos/03_CNC_vs_Welded_Injection.mp4', alt: 'CNC vs Welded Injection' },
-  { video: '/videos/04_Modular_PowderCoat.mp4', alt: 'Modular Powder Coat' },
-  { video: '/videos/05_Ubolt_Protection.mp4', alt: 'U-Bolt Protection' },
-  { video: '/videos/06_DealerNetwork_IdealBoats.mp4', alt: 'Dealer Network: Ideal Boats' },
-];
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -882,42 +869,6 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
           to be replaced. */}
       <section id="next-random-grid" className="relative z-20 w-full bg-[#eef2f8]">
         <ScrollRevealShowcase />
-      </section>
-
-      {/* Behind-the-build depth carousel: sits directly under the "Why Buy
-          Extreme" showcase above. Placeholder heading copy, to be
-          replaced. */}
-      <section className="relative z-20 w-full bg-white py-16 px-6">
-        <p
-          style={{ fontFamily: 'Verdana, Geneva, sans-serif' }}
-          className="text-center text-xs font-bold tracking-[0.2em] uppercase text-zinc-400 mb-8"
-        >
-          Behind The Build
-        </p>
-        <div style={{ height: '500px', position: 'relative' }}>
-          <DepthCarousel
-            items={BEHIND_THE_BUILD_CLIPS}
-            depth={220}
-            spread={90}
-            tilt={22}
-            tiltDirection="right"
-            perspective={1400}
-            visibleCards={4}
-            falloff={0.2}
-            blur={6}
-            autoplay={false}
-            loop
-            cardWidth={300}
-            cardHeight={380}
-            radius={18}
-            tint="#05060a"
-            duration={700}
-            ease="power3.out"
-            autoplayDelay={3200}
-            showControls
-            showIndicators
-          />
-        </div>
       </section>
 
     </div>
