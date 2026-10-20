@@ -37,25 +37,33 @@
 }
 
 .reveal-showcase .arch__left .arch__info {
-  max-width: 356px;
+  max-width: 440px;
   height: 100vh;
   display: grid;
   place-items: center;
 }
 
 .reveal-showcase .arch__left .arch__info h2.header {
-  font-family: "Outfit", sans-serif;
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: -0.84px;
+  /* Apple-style, matching the Trailer Range headings */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: clamp(32px, 3.6vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: #18181b;
+  text-wrap: balance;
 }
 
 .reveal-showcase .arch__left .arch__info p.desc {
-  color: rgba(18, 18, 18, 0.8);
-  font-size: 18px;
-  letter-spacing: -0.54px;
-  margin-block: 6px 28px;
-  line-height: normal;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #71717a;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  margin-block: 18px 30px;
+  line-height: 1.45;
+  text-wrap: pretty;
 }
 
 .reveal-showcase .arch__left .arch__info a.link {

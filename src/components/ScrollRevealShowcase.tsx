@@ -23,33 +23,32 @@ const SHOWCASE_CLIPS: DepthCarouselItem[] = [
 // this component is ever used on its own.
 gsap.registerPlugin(ScrollTrigger);
 
-// Placeholder copy -- to be replaced with real Extreme Trailers content.
-// Kept as four sections (matching the original effect's structure) so
-// swapping the text later is a straight content edit, not a restructure.
+// Panel copy: customer hooks backed by Extreme's own facts (Trailer Range
+// text, boat show profiles, Marine Industry News stainless launch article).
 const SECTIONS = [
   {
     id: 'section-1',
     accent: '#D5FF37',
-    header: 'Why Buy Extreme',
-    desc: 'Placeholder copy -- to be replaced. This section pins against the video on the right as you scroll.',
+    header: 'Your Boat Deserves Better Than Off The Shelf.',
+    desc: 'Most trailers are built for any boat. Ours are set up for yours. With 75 years of combined marine experience behind one of the UK\u2019s largest ranges, you tow safely on the road and launch stress-free at the slip.',
   },
   {
     id: 'section-2',
     accent: '#7DD6FF',
-    header: 'Built To Last',
-    desc: 'Placeholder copy -- to be replaced.',
+    header: 'Unique Boat? So Are We.',
+    desc: 'We cut every frame on our own CNC laser and mould our own rollers, all under one roof in Southampton. We\u2019re believed to be the only trailer maker in Europe that does both, so when your boat needs a part nobody stocks, we make it.',
   },
   {
     id: 'section-3',
     accent: '#FFA0B0',
-    header: 'Engineered For The Water',
-    desc: 'Placeholder copy -- to be replaced.',
+    header: 'Want It Tough? Want It To Look Good?',
+    desc: 'Why choose? Every Extreme is hot-dip galvanised to ISO 1461, with sealed bearings and parts from AL-KO, Knott, Bradley and Dutton Lainson. Pick your roller, snubber and strap colours as standard, or go all the way with Europe\u2019s first 316 marine-grade stainless steel range.',
   },
   {
     id: 'section-4',
     accent: '#FFA17B',
-    header: 'Trusted By Boaters',
-    desc: 'Placeholder copy -- to be replaced.',
+    header: 'Hitch Up. Head Off. No Surprises.',
+    desc: 'We set your trailer up to fit your boat and deliver it personally. Every model is type approved for the UK and Europe with a Certificate of Conformity, and if you ever need a spare, it ships next day.',
   },
 ];
 
