@@ -13,3 +13,6 @@ coverage/
 
 # Local Netlify folder
 .netlify
+
+# AI Ross local test counter
+.ross-tests.json

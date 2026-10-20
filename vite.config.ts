@@ -1,11 +1,36 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import {defineConfig, loadEnv, type Plugin} from 'vite';
+
+// Lets the AI Ross helper (netlify/functions/ross-start-call.mts) run inside
+// the normal local preview. Settings are re-read from .env.local on every
+// request, so flipping ROSS_ENABLED takes effect without a restart.
+function rossDevHelper(): Plugin {
+  return {
+    name: 'ross-dev-helper',
+    configureServer(server) {
+      server.middlewares.use('/.netlify/functions/ross-start-call', async (req, res) => {
+        try {
+          Object.assign(process.env, loadEnv('development', process.cwd(), ''));
+          const mod = await server.ssrLoadModule('/netlify/functions/ross-start-call.mts');
+          const response: Response = await mod.default(new Request('http://localhost/', { method: req.method }));
+          res.statusCode = response.status;
+          response.headers.forEach((v, k) => res.setHeader(k, v));
+          res.end(await response.text());
+        } catch (e: any) {
+          res.statusCode = 500;
+          res.setHeader('content-type', 'application/json');
+          res.end(JSON.stringify({ error: 'dev-helper', message: String(e?.message || e) }));
+        }
+      });
+    },
+  };
+}
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), rossDevHelper()],
     resolve: {
       alias: {
         '@/components': path.resolve(__dirname, 'src/components'),

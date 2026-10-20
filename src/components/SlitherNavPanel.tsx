@@ -128,7 +128,7 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
             {
               '--fab-color': '#062e69',
               '--fab-size': `${height}px`,
-              '--fab-icon-size': `${iconSize}px`,
+              '--fab-icon-size': `${Math.round(iconSize * 1.6)}px`,
               '--fab-hover-width': `${expandedWidth}px`,
               '--fab-hover-radius': `${height / 2}px`,
               fontFamily: 'Verdana, Geneva, sans-serif',
@@ -137,8 +137,11 @@ export const SlitherNavPanel: React.FC<SlitherNavPanelProps> = ({
           }
         >
           <span className="brand-fab-btn__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z" />
+            {/* AI "sparkle" mark: one large four-point star plus two small ones */}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M10 2.5Q10.9 11.1 19 12Q10.9 12.9 10 21.5Q9.1 12.9 1 12Q9.1 11.1 10 2.5Z" />
+              <path d="M19 1Q19.4 4.1 22.5 4.5Q19.4 4.9 19 8Q18.6 4.9 15.5 4.5Q18.6 4.1 19 1Z" />
+              <path d="M19.5 16Q19.8 18.2 22 18.5Q19.8 18.8 19.5 21Q19.2 18.8 17 18.5Q19.2 18.2 19.5 16Z" />
             </svg>
           </span>
           <span className="brand-fab-btn__text">{label}</span>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Trailer3DViewer } from './Trailer3DViewer';
 import {
   Search,
   RotateCcw,
@@ -163,6 +164,8 @@ export const TrailerConfiguratorPanel: React.FC = () => {
   const [selectedWinch, setSelectedWinch] = useState<string>('winch-manual');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+  // EXT750 test: open on the interactive 3D model; photo thumbnails switch back to images
+  const [show3D, setShow3D] = useState<boolean>(true);
 
   // Accordion section collapse state
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -215,7 +218,7 @@ export const TrailerConfiguratorPanel: React.FC = () => {
           <div className="border-b border-zinc-200 pb-5">
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900">
-                3500 Super Roller
+                EXT750 Maxi Roller
               </h1>
               <span className="text-xs font-bold text-zinc-700 bg-zinc-100 px-2.5 py-0.5 rounded-full border border-zinc-200">
                 2027
@@ -512,29 +515,36 @@ export const TrailerConfiguratorPanel: React.FC = () => {
         {/* RIGHT COLUMN: Right window has an image of the trailer */}
         <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col space-y-4">
           {/* Main Visualizer Window */}
-          <div className="relative aspect-[16/10] sm:aspect-[16/9.5] w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-b from-white to-zinc-100 border border-zinc-200 shadow-xl group flex items-center justify-center p-4 sm:p-8">
-            {/* Trailer Image */}
-            <img
-              src={TRAILER_VIEWS[activeImageIndex].src}
-              alt={TRAILER_VIEWS[activeImageIndex].title}
-              className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-transform duration-700 group-hover:scale-[1.03]"
-            />
+          <div className="relative aspect-[4/3.6] sm:aspect-[16/9.5] w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-b from-white to-zinc-100 border border-zinc-200 shadow-xl group flex items-center justify-center p-4 sm:p-8">
+            {/* Trailer: interactive 3D model, or photo */}
+            {show3D ? (
+              <Trailer3DViewer finishId={selectedFinish} />
+            ) : (
+              <img
+                src={TRAILER_VIEWS[activeImageIndex].src}
+                alt={TRAILER_VIEWS[activeImageIndex].title}
+                className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+            )}
 
             {/* Active Spec Badge */}
             <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-zinc-200 text-xs font-semibold text-zinc-900 flex items-center gap-2 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>{TRAILER_VIEWS[activeImageIndex].title}</span>
+              <span>{show3D ? 'EXT750 Maxi Roller · Interactive 3D' : TRAILER_VIEWS[activeImageIndex].title}</span>
             </div>
 
             {/* Overlaid View Controls (Porsche screenshot style: Adjust scene, Compare, 360 View, Download) */}
             <div className="absolute bottom-4 left-4 z-10 flex flex-wrap items-center gap-2">
               <div className="bg-white/90 backdrop-blur-md border border-zinc-200 rounded-xl p-1 flex items-center gap-1 shadow-md">
                 <button
-                  onClick={() => setActiveImageIndex((prev) => (prev + 1) % TRAILER_VIEWS.length)}
+                  onClick={() => {
+                    setShow3D(false);
+                    setActiveImageIndex((prev) => (prev + 1) % TRAILER_VIEWS.length);
+                  }}
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sliders className="w-3.5 h-3.5 text-zinc-700" />
-                  <span>Cycle model</span>
+                  <span className="hidden sm:inline">Cycle model</span>
                 </button>
                 <div className="h-3 w-[1px] bg-zinc-300" />
                 <button
@@ -542,18 +552,15 @@ export const TrailerConfiguratorPanel: React.FC = () => {
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Compass className="w-3.5 h-3.5 text-zinc-700" />
-                  <span>Compare</span>
+                  <span className="hidden sm:inline">Compare</span>
                 </button>
                 <div className="h-3 w-[1px] bg-zinc-300" />
                 <button
-                  onClick={() => {
-                    const next = (activeImageIndex + 1) % TRAILER_VIEWS.length;
-                    setActiveImageIndex(next);
-                  }}
+                  onClick={() => setShow3D(true)}
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-zinc-700" />
-                  <span>360° View</span>
+                  <span className="hidden sm:inline">360° View</span>
                 </button>
               </div>
 
@@ -577,13 +584,25 @@ export const TrailerConfiguratorPanel: React.FC = () => {
           </div>
 
           {/* Bottom Thumbnails Strip (Porsche screenshot style: preview tiles) */}
-          <div className="grid grid-cols-6 gap-2 sm:gap-3 pt-1">
+          <div className="grid grid-cols-7 gap-2 sm:gap-3 pt-1">
+            <button
+              onClick={() => setShow3D(true)}
+              className={`aspect-[16/10] rounded-xl overflow-hidden border p-1 bg-zinc-900 text-white transition-all cursor-pointer flex flex-col items-center justify-center ${
+                show3D ? 'border-black ring-2 ring-black/40 scale-[1.03] shadow-md' : 'border-zinc-200 opacity-75 hover:opacity-100'
+              }`}
+            >
+              <span className="text-sm sm:text-base font-extrabold leading-none">3D</span>
+              <span className="text-[9px] sm:text-[10px] opacity-70">EXT750</span>
+            </button>
             {TRAILER_VIEWS.map((view, idx) => {
-              const isActive = activeImageIndex === idx;
+              const isActive = !show3D && activeImageIndex === idx;
               return (
                 <button
                   key={view.id}
-                  onClick={() => setActiveImageIndex(idx)}
+                  onClick={() => {
+                    setShow3D(false);
+                    setActiveImageIndex(idx);
+                  }}
                   className={`aspect-[16/10] rounded-xl overflow-hidden border p-1 bg-white transition-all cursor-pointer relative flex items-center justify-center ${
                     isActive
                       ? 'border-black ring-2 ring-black/40 scale-[1.03] shadow-md'
@@ -605,7 +624,7 @@ export const TrailerConfiguratorPanel: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-zinc-200 mb-5">
               <div>
                 <h3 className="text-xl font-bold text-black">Bespoke Trailer Specification</h3>
-                <p className="text-xs text-zinc-500">Extreme 3500 Super Roller · 2027 Model</p>
+                <p className="text-xs text-zinc-500">Extreme EXT750 Maxi Roller · 2027 Model</p>
               </div>
               <button
                 onClick={() => setShowSummaryModal(false)}

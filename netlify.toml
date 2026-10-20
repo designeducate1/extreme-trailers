@@ -1,0 +1,21 @@
+# How Netlify builds this site.
+[build]
+  command   = "npm run build"   # makes the finished website
+  publish   = "dist"            # the folder that gets put online
+  functions = "netlify/functions"  # AI Ross's hidden helper lives here
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# AI Ross settings are NOT stored here. Add them in Netlify:
+#   Site configuration -> Environment variables
+#   ULTRAVOX_API_KEY, ROSS_ENABLED (leave false), ROSS_MAX_SECONDS, ROSS_MAX_TESTS, ROSS_VOICE
+# If ROSS_ENABLED is missing, Ross is OFF.
+
+# 3D trailer files: allow loading and caching
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "model/gltf-binary"
+    Cache-Control = "public, max-age=3600"
