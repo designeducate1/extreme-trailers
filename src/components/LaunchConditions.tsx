@@ -99,6 +99,35 @@ export const BAND_STYLE: Record<Band, { label: string; hex: string; soft: string
   care: { label: 'Take care', hex: '#d97706', soft: 'rgba(217,119,6,0.14)' },
   challenging: { label: 'Challenging', hex: '#dc2626', soft: 'rgba(220,38,38,0.14)' },
 };
+// ---- per-trailer guide (EXAMPLE limits for the pitch -- Ross to confirm) --
+// calm / rough = significant wave height in metres; windCare = mean wind (mph)
+// at which that trailer type moves to "take care". Force 6+ is rough for all.
+export interface LaunchLimit { calm: number; rough: number; windCare: number }
+export const LAUNCH_LIMITS: Record<string, LaunchLimit | null> = {
+  'fixed-keel': { calm: 0.3, rough: 0.75, windCare: 19 },
+  launcher: { calm: 0.3, rough: 0.75, windCare: 13 },
+  inflatable: { calm: 0.4, rough: 0.9, windCare: 13 },
+  pwc: { calm: 0.5, rough: 1.0, windCare: 13 },
+  bunk: { calm: 0.5, rough: 1.0, windCare: 19 },
+  roller: { calm: 0.6, rough: 1.25, windCare: 19 },
+  stainless: { calm: 0.6, rough: 1.25, windCare: 19 },
+  dollies: null, // workshop / showroom only -- never launched
+};
+export function trailerBand(w: Wind, lim: LaunchLimit): Band {
+  const g = w.gustMph ?? 0;
+  const { hs } = seaHs(w);
+  if (w.windMph >= 25 || g >= 38 || hs >= lim.rough) return 'challenging';
+  if (w.windMph >= lim.windCare || hs > lim.calm) return 'care';
+  return 'good';
+}
+export const TRAILER_BAND_LABEL: Record<Band, string> = {
+  good: 'Suits today',
+  care: 'Take care today',
+  challenging: 'Too rough today',
+};
+/** Card tank scale: 0 m at 80% down the tank, 1.5 m+ at 16%. */
+export const hsToTop = (hs: number) => 80 - (Math.min(Math.max(hs, 0), 1.5) / 1.5) * 64;
+
 // Water colours: [surface, depth]
 export const SEA_CALM: [string, string] = ['#67e8f9', '#0891b2'];   // reference: flat calm (teal)
 export const SEA_DANGER: [string, string] = ['#ff3b3b', '#9f1239']; // reference: dangerous (harsh red)
@@ -118,7 +147,11 @@ export const compass = (deg: number) => COMPASS[Math.round(deg / 45) % 8];
 // faster = choppier, higher = more sea. Driven by one severity value 0..1.
 export const SeaTank: React.FC<{
   s: number; colors: [string, string]; className?: string; markers?: boolean; label?: string;
-}> = ({ s, colors, className = '', markers = false, label }) => {
+  /** Water line as % from the top (overrides the level worked out from s). */
+  surface?: number;
+  /** Per-trailer calm / rough lines and today's dot, as % from the top. */
+  marks?: { calm: number; rough: number; dot: number };
+}> = ({ s, colors, className = '', markers = false, label, surface, marks }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   useEffect(() => {
@@ -128,7 +161,7 @@ export const SeaTank: React.FC<{
   }, []);
   const v = Math.max(0, Math.min(1, s));
   const style = {
-    '--surface': `${72 - v * 44}%`,             // water line, from the top of the tank
+    '--surface': `${surface ?? 72 - v * 44}%`,  // water line, from the top of the tank
     '--r': `${50 - v * 12}%`,                   // 50% = circle (glassy) -> 38% (steep crests)
     '--size': `${240 - v * 140}%`,              // big slow blobs (long swell) -> small ones (short, steep chop)
     '--op': (0.5 + v * 0.25).toFixed(2),        // rough water reads denser
@@ -138,10 +171,17 @@ export const SeaTank: React.FC<{
   return (
     <div ref={ref} className={`sea-tank ${visible ? '' : 'is-paused'} ${className}`} style={style} role="img" aria-label={label}>
       <div className="sea-wave" /><div className="sea-wave" /><div className="sea-wave" />
-      {markers && (
+      {markers && !marks && (
         <>
           <div className="sea-mark" style={{ top: '72%' }}><span>calm</span></div>
           <div className="sea-mark sea-mark-danger" style={{ top: '28%' }}><span>rough</span></div>
+        </>
+      )}
+      {marks && (
+        <>
+          <div className="sea-mark sea-mark-calm" style={{ top: `${marks.calm}%` }}><span>calm</span></div>
+          <div className="sea-mark sea-mark-danger" style={{ top: `${marks.rough}%` }}><span>rough</span></div>
+          <div className="sea-dot" style={{ top: `${marks.dot}%` }} aria-hidden="true" />
         </>
       )}
     </div>
@@ -242,7 +282,7 @@ export const LaunchConditionsBar: React.FC<{
       {msg && <p className="mt-2 text-xs text-zinc-500">{msg}</p>}
       {wind && band && <SeaScale wind={wind} band={band} />}
       <p className="mt-4 text-xs text-zinc-500">
-        A general guide from live wind and sea, with live day-to-day readings. Always check local conditions, tides and your slipway before launching.
+        A general guide from live wind and sea, with live day-to-day readings. Each trailer below is compared with example limits for its type, to be confirmed by Extreme. Always check local conditions, tides and your slipway before launching.
       </p>
     </div>
   );
