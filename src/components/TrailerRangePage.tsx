@@ -93,14 +93,6 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }
       <div id="trailer-builder" className="scroll-mt-24">
         <TrailerConfiguratorPanel />
       </div>
-      <div className="w-full flex justify-center py-6 bg-white border-t border-zinc-200">
-        <button
-          onClick={onBackHome}
-          className="text-xs font-sans-ui text-zinc-500 hover:text-black underline cursor-pointer transition-colors"
-        >
-          Back to Home
-        </button>
-      </div>
     </div>
   );
 };

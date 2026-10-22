@@ -541,7 +541,7 @@ export const TrailerConfiguratorPanel: React.FC = () => {
                     setShow3D(false);
                     setActiveImageIndex((prev) => (prev + 1) % TRAILER_VIEWS.length);
                   }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-2.5 sm:py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sliders className="w-3.5 h-3.5 text-zinc-700" />
                   <span className="hidden sm:inline">Cycle model</span>
@@ -549,7 +549,7 @@ export const TrailerConfiguratorPanel: React.FC = () => {
                 <div className="h-3 w-[1px] bg-zinc-300" />
                 <button
                   onClick={() => setShowTechModal(true)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-2.5 sm:py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Compass className="w-3.5 h-3.5 text-zinc-700" />
                   <span className="hidden sm:inline">Compare</span>
@@ -557,7 +557,7 @@ export const TrailerConfiguratorPanel: React.FC = () => {
                 <div className="h-3 w-[1px] bg-zinc-300" />
                 <button
                   onClick={() => setShow3D(true)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-2.5 sm:py-1.5 rounded-lg text-xs font-semibold text-zinc-800 hover:text-black hover:bg-zinc-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-zinc-700" />
                   <span className="hidden sm:inline">360° View</span>

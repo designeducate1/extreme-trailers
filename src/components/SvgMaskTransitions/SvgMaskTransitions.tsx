@@ -793,7 +793,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             <button
               onClick={scrollToStage}
               aria-label="Scroll down to explore"
-              className="group flex flex-col items-center text-white/80 hover:text-white transition-colors cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+              className="group p-3 -m-3 flex flex-col items-center text-white/80 hover:text-white transition-colors cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
             >
               <ChevronDown className="w-6 h-6 animate-bounce text-white/90" />
             </button>
@@ -841,7 +841,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
       </section>
 
       {/* Space of White Background with 'Build The Right Trailer. First Time.' */}
-      <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 pt-[140px] sm:pt-[190px] md:pt-[220px] pb-0 px-6 flex flex-col items-center justify-center font-sf text-center">
+      <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 pt-[140px] sm:pt-[190px] md:pt-[220px] pb-10 sm:pb-0 px-6 flex flex-col items-center justify-center font-sf text-center">
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tighter text-zinc-900 font-sf mb-5 leading-[1.05]">
             Build The Right Trailer.

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import bunk from '../assets/categories/bunk.jpg';
 import fixedKeel from '../assets/categories/fixed-keel.jpg';
 import inflatable from '../assets/categories/inflatable.jpg';
@@ -10,6 +10,7 @@ import stainless from '../assets/categories/stainless-steel.jpg';
 import { findTrailer, CATEGORY_NAMES, type CategoryId } from '../data/trailers';
 import type { RossPick } from '../hooks/useRoss';
 import { Trailer3DViewer } from './Trailer3DViewer';
+import { LaunchConditionsBar, SeaTank, useWind, bandFor, severity, seaLine, BAND_STYLE, SEA_BAND, DEFAULT_PLACE, type Place } from './LaunchConditions';
 
 // Trailer Range page: short "about the range" passage, then the eight
 // trailer categories. Category photos are cropped from Extreme's current
@@ -48,6 +49,9 @@ const CATEGORY_IMG = (id: CategoryId) => CATEGORIES.find((c) => c.id === id)?.im
 
 export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highlighted, pick }) => {
   const picked = pick ? findTrailer(pick.trailerId) : undefined;
+  const [place, setPlace] = useState<Place>(DEFAULT_PLACE);
+  const { wind, error } = useWind(place);
+  const band = wind ? bandFor(wind) : null;
   return (
     <>
       {/* About the range */}
@@ -87,6 +91,8 @@ export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highl
 
           {rossPanel}
 
+          <LaunchConditionsBar place={place} wind={wind} error={error} onPlace={setPlace} />
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {CATEGORIES.map((c) => {
               const card = (
@@ -103,8 +109,26 @@ export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highl
                       </span>
                     )}
                   </div>
-                  <div className="px-4 sm:px-5 pb-5 text-left">
-                    <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug">{c.name}</h3>
+                  {/* Live sea tank: today's water against calm / rough marks */}
+                  <div className="px-3 sm:px-4 -mt-1">
+                    {wind && band ? (
+                      <SeaTank s={severity(wind)} colors={SEA_BAND[band]} markers className="h-14 sm:h-16"
+                        label={`Today's sea: ${seaLine(wind).text}`} />
+                    ) : (
+                      <div className="sea-tank h-14 sm:h-16" />
+                    )}
+                  </div>
+                  <div className="px-4 sm:px-5 pb-5 pt-2 text-left">
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: band ? BAND_STYLE[band].hex : '#a1a1aa' }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: band ? BAND_STYLE[band].hex : '#d4d4d8' }} />
+                      {band ? BAND_STYLE[band].label : error ? 'Wind unavailable' : 'Loading wind…'}
+                    </div>
+                    {wind && (() => { const sl = seaLine(wind); return (
+                      <div className="mt-0.5 text-[11px] text-zinc-500 leading-tight">
+                        <span className="hidden sm:inline">Sea state {sl.st.code} · </span>{sl.st.name} · Hs {sl.hs.toFixed(1)} m{sl.estimated ? ' (est.)' : ''}
+                      </div>
+                    ); })()}
+                    <h3 className="mt-1 text-base sm:text-lg font-bold tracking-tight leading-snug">{c.name}</h3>
                     <span className={`mt-1 inline-block text-sm ${c.live ? 'text-[#13306b] font-semibold' : 'text-zinc-400'}`}>
                       {c.live ? 'View EXT750 in 3D ›' : 'Coming soon'}
                     </span>

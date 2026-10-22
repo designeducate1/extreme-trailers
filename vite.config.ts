@@ -5,22 +5,24 @@ import {defineConfig, type Plugin} from 'vite';
 import fs from 'fs';
 import {parse} from 'dotenv';
 
-// Lets the AI Ross helper (netlify/functions/ross-start-call.mts) run inside
+// Lets the hidden helpers (netlify/functions/ross-start-call.mts, wind.mts) run inside
 // the normal local preview. Settings are re-read from .env.local on every
 // request, so flipping ROSS_ENABLED takes effect without a restart.
 function rossDevHelper(): Plugin {
   return {
     name: 'ross-dev-helper',
     configureServer(server) {
-      server.middlewares.use('/.netlify/functions/ross-start-call', async (req, res) => {
+      server.middlewares.use(async (req, res, next) => {
+        const m = (req.url || '').match(/^\/\.netlify\/functions\/(ross-start-call|wind)(\?.*)?$/);
+        if (!m) return next();
         try {
           // Read .env then .env.local fresh each time (later file wins)
           for (const f of ['.env', '.env.local']) {
             const file = path.resolve(__dirname, f);
             if (fs.existsSync(file)) Object.assign(process.env, parse(fs.readFileSync(file)));
           }
-          const mod = await server.ssrLoadModule('/netlify/functions/ross-start-call.mts');
-          const response: Response = await mod.default(new Request('http://localhost/', { method: req.method }));
+          const mod = await server.ssrLoadModule(`/netlify/functions/${m[1]}.mts`);
+          const response: Response = await mod.default(new Request('http://localhost' + req.url, { method: req.method }));
           res.statusCode = response.status;
           response.headers.forEach((v, k) => res.setHeader(k, v));
           res.end(await response.text());
@@ -44,6 +46,9 @@ export default defineConfig(() => {
       },
     },
     server: {
+      // Share the preview on the home Wi-Fi so a phone can open it
+      // (http://<Mac's IP address>:3000). Local testing only.
+      host: true,
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
