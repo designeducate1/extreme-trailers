@@ -108,7 +108,7 @@ export const Trailer3DViewer: React.FC<Props> = ({ finishId, focus: focusProp })
       )}
 
       {/* Part shortcuts (also the hook for the Ross voice assistant) */}
-      <div className="absolute top-14 left-4 right-4 z-10 flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="absolute top-14 left-4 right-4 z-10 flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto pr-6 sm:pr-0 [mask-image:linear-gradient(to_right,black_82%,transparent)] sm:[mask-image:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {(Object.keys(PART_VIEWS) as TrailerPart[]).map((p) => (
           <button
             key={p}

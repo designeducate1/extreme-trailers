@@ -168,7 +168,7 @@
   }
 
   .reveal-showcase .arch__right .video-wrapper {
-    position: static;
+    position: relative;
     transform: none;
     height: 360px;
     width: 100%;
@@ -191,7 +191,15 @@
   }
 
   .reveal-showcase .arch__right .video-wrapper {
+    position: relative; /* keeps the mute button inside the video frame */
     border-radius: 10px;
-    height: 280px;
+    height: 250px;
+  }
+
+  .reveal-showcase .video-mute-btn {
+    right: 6px;
+    bottom: 6px;
+    width: 44px; /* Apple's minimum comfortable tap size */
+    height: 44px;
   }
 }

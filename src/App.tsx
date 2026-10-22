@@ -3,6 +3,7 @@ import { SvgMaskTransitions, VariationType } from './components/SvgMaskTransitio
 import { TaskManager } from './components/TaskManager/TaskManager';
 import { MenuBanner } from './components/MenuBanner';
 import { TrailerRangePage } from './components/TrailerRangePage';
+import { ExtremeFooter } from './components/ExtremeFooter';
 
 type AppViewMode = 'svg-transitions' | 'task-manager' | 'split-view' | 'trailer-range';
 
@@ -26,6 +27,18 @@ export default function App() {
   const handleGoToTrailerRange = () => {
     setViewMode('trailer-range');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleFooterNav = (action: string) => {
+    if (action === 'HOME') {
+      setViewMode('svg-transitions');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (action === 'TRAILER RANGE') {
+      setViewMode('trailer-range');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -85,6 +98,11 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Footer: shown on Home and Trailer Range views only */}
+      {(viewMode === 'svg-transitions' || viewMode === 'trailer-range') && (
+        <ExtremeFooter onNavClick={handleFooterNav} />
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import bannerLogo from '../assets/extreme-logo-banner.png';
 
 interface MenuBannerProps {
@@ -26,6 +26,17 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close the phone menu on Escape, and stop the page scrolling behind it.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
+  }, [menuOpen]);
 
   const activeIndex = hoveredIndex !== null ? hoveredIndex : selectedIndex;
 
@@ -72,7 +83,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
           </div>
 
           {/* Main Navigation Headings re-centered in the remaining new space */}
-          <div className="flex-1 flex items-center justify-center min-w-0">
+          <div className="hidden lg:flex flex-1 items-center justify-center min-w-0">
             <nav className="flex items-center justify-center max-w-full overflow-x-auto no-scrollbar py-1">
               <div
                 className="banner-nav-wrap wrap"
@@ -123,8 +134,53 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
               </div>
             </nav>
           </div>
+
+          {/* Phone / tablet: menu button */}
+          <div className="lg:hidden ml-auto">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-expanded={menuOpen}
+              aria-controls="phone-menu"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              className="w-11 h-11 -mr-1 flex items-center justify-center rounded-full text-[#13306b] active:bg-zinc-100 cursor-pointer"
+            >
+              <span className="relative block w-6 h-4" aria-hidden="true">
+                <span className={`absolute left-0 w-6 h-[2.5px] rounded-full bg-current transition-all duration-300 ${menuOpen ? 'top-[7px] rotate-45' : 'top-0'}`} />
+                <span className={`absolute left-0 top-[7px] w-6 h-[2.5px] rounded-full bg-current transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+                <span className={`absolute left-0 w-6 h-[2.5px] rounded-full bg-current transition-all duration-300 ${menuOpen ? 'top-[7px] -rotate-45' : 'top-[14px]'}`} />
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Phone / tablet: drop-down menu */}
+        <div
+          id="phone-menu"
+          className={`lg:hidden absolute left-0 right-0 top-full bg-white border-b border-zinc-200 shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ${menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}
+        >
+          <nav className="px-4 py-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            {NAV_ITEMS.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                tabIndex={menuOpen ? 0 : -1}
+                onClick={() => {
+                  setSelectedIndex(index);
+                  setMenuOpen(false);
+                  handleNavClick(item.action);
+                }}
+                className={`w-full text-left py-3.5 px-2 border-b border-zinc-100 last:border-0 text-[15px] font-bold tracking-wide cursor-pointer ${selectedIndex === index ? 'text-[#13306b]' : 'text-zinc-700'}`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
         </div>
       </header>
+      {menuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/30" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+      )}
 
       {/* Info / Modal popup for non-scrolling menu tabs */}
       {activeModal && (
