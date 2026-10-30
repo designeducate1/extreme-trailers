@@ -1,0 +1,242 @@
+/* "Ask Ross" chat: a small AI orb in the corner (same glow ring as the
+   AI.Assistant button) that opens a panel in Extreme's navy and blues. */
+.ross-chat {
+  --rc-navy: #0d2352;
+  --rc-blue: #12306b;
+  --rc-sky: #5cc8ff;
+  --rc-pale: #eef2f8;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 45;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  color: #15181e;
+}
+/* Clear of the Trailer Builder's bottom bar on phones and tablets. */
+@media (max-width: 1023px) { .ross-chat.is-raised { bottom: 92px; } }
+
+/* ---- launcher ---- */
+.ross-chat__launcher {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--rc-blue) 0%, var(--rc-navy) 70%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -8px rgba(13, 35, 82, 0.6);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.ross-chat__launcher:hover { transform: scale(1.05); }
+.ross-chat__launcher:focus-visible { outline: 3px solid var(--rc-sky); outline-offset: 4px; }
+.ross-chat__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: rc-rotate 2.4s linear infinite;
+}
+@keyframes rc-rotate {
+  0%   { transform: rotate(90deg);  box-shadow: 0 4px 9px 0 #fff inset, 0 9px 13px 0 #5cc8ff inset, 0 26px 26px 0 #1e5bd8 inset; }
+  50%  { transform: rotate(270deg); box-shadow: 0 4px 9px 0 #fff inset, 0 9px 5px 0 #3b82f6 inset, 0 18px 26px 0 #0d2352 inset; }
+  100% { transform: rotate(450deg); box-shadow: 0 4px 9px 0 #fff inset, 0 9px 13px 0 #5cc8ff inset, 0 26px 26px 0 #1e5bd8 inset; }
+}
+.ross-chat__label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 40px;
+  line-height: 1;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.ross-chat__label > span { display: inline-block; animation: rc-letter 2.4s infinite; }
+.ross-chat__label > span + span { margin-left: 1px; }
+.ross-chat__label small {
+  flex-basis: 100%;
+  margin-top: 3px;
+  text-align: center;
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+@keyframes rc-letter {
+  0%, 100% { opacity: 0.6; transform: none; }
+  20% { opacity: 1; transform: scale(1.15); }
+}
+.ross-chat__x { position: relative; z-index: 1; width: 24px; height: 24px; }
+
+/* ---- panel ---- */
+.ross-chat__panel {
+  position: absolute;
+  right: 0;
+  bottom: 80px;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100vh - 140px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--rc-pale);
+  box-shadow: 0 24px 60px -12px rgba(13, 35, 82, 0.45), 0 0 0 1px rgba(13, 35, 82, 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.98);
+  transform-origin: bottom right;
+  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+}
+.ross-chat.is-open .ross-chat__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.ross-chat__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 18px 16px 22px;
+  background: linear-gradient(135deg, var(--rc-blue), var(--rc-navy));
+  color: #fff;
+}
+.ross-chat__title { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+.ross-chat__subtitle {
+  margin: 3px 0 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rc-sky);
+}
+.ross-chat__close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.ross-chat__close:hover { background: rgba(255, 255, 255, 0.12); }
+.ross-chat__close svg { width: 20px; height: 20px; }
+
+.ross-chat__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ross-chat__msg {
+  max-width: 86%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 0.94rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ross-chat__msg--bot { align-self: flex-start; background: #fff; border-bottom-left-radius: 5px; box-shadow: 0 1px 2px rgba(13, 35, 82, 0.06); }
+.ross-chat__msg--user { align-self: flex-end; background: var(--rc-blue); color: #fff; border-bottom-right-radius: 5px; }
+.ross-chat__msg a { color: #1e5bd8; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.ross-chat__msg--user a { color: #fff; }
+
+.ross-chat__typing { display: flex; gap: 4px; padding: 14px 16px; }
+.ross-chat__typing i { width: 7px; height: 7px; border-radius: 50%; background: #9aa6bd; animation: rc-dot 1.1s infinite; }
+.ross-chat__typing i:nth-child(2) { animation-delay: 0.15s; }
+.ross-chat__typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes rc-dot { 0%, 60%, 100% { opacity: 0.35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+
+.ross-chat__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ross-chat__chips button {
+  padding: 7px 12px;
+  border: 1px solid rgba(18, 48, 107, 0.25);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--rc-blue);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ross-chat__chips button:hover { border-color: var(--rc-blue); }
+
+.ross-chat__remember {
+  padding: 12px 14px;
+  border: 1px dashed rgba(18, 48, 107, 0.3);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 0.86rem;
+  color: #4b5563;
+}
+.ross-chat__remember > div { display: flex; gap: 8px; margin-top: 10px; }
+.ross-chat__remember button {
+  padding: 7px 14px;
+  border: 1px solid #d5dae3;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b7280;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.ross-chat__remember button.is-yes { border-color: var(--rc-blue); background: var(--rc-blue); color: #fff; }
+
+.ross-chat__form {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px 6px;
+  background: #fff;
+}
+.ross-chat__form input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 18px;
+  border: 1.5px solid rgba(18, 48, 107, 0.35);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 16px; /* stops iPhone zooming in on focus */
+  color: inherit;
+  outline: none;
+}
+.ross-chat__form input:focus { border-color: var(--rc-blue); box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.35); }
+.ross-chat__form button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--rc-blue);
+  color: #fff;
+  cursor: pointer;
+}
+.ross-chat__form button:disabled { opacity: 0.45; cursor: default; }
+.ross-chat__form button svg { width: 20px; height: 20px; }
+.ross-chat__note { margin: 0; padding: 0 16px 10px; background: #fff; font-size: 0.68rem; color: #8a93a3; text-align: center; }
+
+@media (max-width: 639px) {
+  .ross-chat { right: 16px; bottom: 16px; }
+  .ross-chat__launcher { width: 58px; height: 58px; }
+  .ross-chat__panel { position: fixed; right: 12px; left: 12px; bottom: 86px; width: auto; height: min(560px, calc(100dvh - 110px)); }
+  .ross-chat.is-raised .ross-chat__panel { bottom: 160px; height: min(560px, calc(100dvh - 180px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ross-chat__ring { animation: none; box-shadow: 0 4px 9px 0 #fff inset, 0 9px 13px 0 #5cc8ff inset, 0 26px 26px 0 #1e5bd8 inset; }
+  .ross-chat__label > span, .ross-chat__typing i { animation: none; opacity: 1; }
+  .ross-chat__panel { transition: none; }
+}

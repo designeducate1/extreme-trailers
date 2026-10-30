@@ -116,6 +116,7 @@
 }
 
 .depth-carousel__dot {
+  position: relative;
   width: 7px;
   height: 7px;
   padding: 0;
@@ -126,6 +127,13 @@
   transition:
     width 0.25s ease,
     background 0.25s ease;
+}
+
+/* Bigger invisible tap area around each small dot (phones). */
+.depth-carousel__dot::after {
+  content: '';
+  position: absolute;
+  inset: -12px -4px;
 }
 
 .depth-carousel__dot.is-active {

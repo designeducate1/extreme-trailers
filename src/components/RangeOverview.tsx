@@ -8,23 +8,15 @@ import roller from '../assets/categories/roller.jpg';
 import dollies from '../assets/categories/showroom-dollies.jpg';
 import stainless from '../assets/categories/stainless-steel.jpg';
 import { findTrailer, CATEGORY_NAMES, type CategoryId } from '../data/trailers';
+import { findModel, FAMILIES, FAMILY_CATEGORY, builderLinkFor } from '../data/range';
 import type { RossPick } from '../hooks/useRoss';
 import { Trailer3DViewer } from './Trailer3DViewer';
+import { SeaTank, severity, seaLine, BAND_STYLE, SEA_BAND, LAUNCH_LIMITS, trailerBand, TRAILER_BAND_LABEL, hsToTop, type Wind } from './LaunchConditions';
 
-// Trailer Range page: short "about the range" passage, then the eight
-// trailer categories. Category photos are cropped from Extreme's current
+// Trailer Range page: short "about the range" passage; the eight
+// trailer categories are shared with RangeFinder. Category photos are cropped from Extreme's current
 // site as placeholders -- swap in Ross's full-size originals when available.
 
-interface Props {
-  /** Called when a category with a live 3D model is chosen (Roller -> EXT750). */
-  onOpenBuilder?: () => void;
-  /** The AI Ross card, shown at the top of Explore The Range when open. */
-  rossPanel?: React.ReactNode;
-  /** Categories Ross has shortlisted (null = no filtering). */
-  highlighted?: CategoryId[] | null;
-  /** The trailer Ross has recommended. */
-  pick?: RossPick | null;
-}
 
 const FACTS = [
   { value: '75 years', label: 'Combined marine experience' },
@@ -33,7 +25,7 @@ const FACTS = [
   { value: 'Next day', label: 'Parts delivery from stock' },
 ];
 
-const CATEGORIES: { id: CategoryId; name: string; img: string; live?: boolean }[] = [
+export const CATEGORIES: { id: CategoryId; name: string; img: string; live?: boolean }[] = [
   { id: 'bunk', name: 'Bunk', img: bunk },
   { id: 'fixed-keel', name: 'Fixed Keel', img: fixedKeel },
   { id: 'inflatable', name: 'Inflatable', img: inflatable },
@@ -44,10 +36,12 @@ const CATEGORIES: { id: CategoryId; name: string; img: string; live?: boolean }[
   { id: 'stainless', name: 'Stainless Steel', img: stainless },
 ];
 
-const CATEGORY_IMG = (id: CategoryId) => CATEGORIES.find((c) => c.id === id)?.img;
+export const CATEGORY_IMG = (id: CategoryId) => CATEGORIES.find((c) => c.id === id)?.img;
 
-export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highlighted, pick }) => {
-  const picked = pick ? findTrailer(pick.trailerId) : undefined;
+// The "One Of The UK's Largest Trailer Ranges" intro. The categories,
+// launch conditions and AI Ross's pick now live in RangeFinder's merged
+// "Explore The Range" section, using CategoryTank and RossPickCard below.
+export const RangeOverview: React.FC = () => {
   return (
     <>
       {/* About the range */}
@@ -75,63 +69,89 @@ export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highl
         </div>
       </section>
 
-      {/* The range */}
-      <section id="trailer-categories" className="w-full bg-[#eef2f8] text-zinc-900 font-sf px-6 pt-20 sm:pt-28 pb-20 sm:pb-28 scroll-mt-20">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-center text-4xl sm:text-5xl font-bold tracking-tighter leading-[1.05] mb-4">
-            Explore The Range.
-          </h2>
-          <p className="text-center text-lg sm:text-xl text-zinc-500 mb-12 sm:mb-16">
-            Eight families of trailer, each set up for the way you launch.
-          </p>
+    </>
+  );
+};
 
-          {rossPanel}
+// Live sea tank for one category: today's water against that trailer's
+// example launch limits (LaunchConditions.tsx), with its band label.
+export function CategoryTank({ id, name, wind, error }: { id: CategoryId; name: string; wind: Wind | null; error: boolean }) {
+  const lim = LAUNCH_LIMITS[id];
+  if (lim === null) {
+    return (
+      <>
+        <div className="sea-tank h-12 sm:h-14 flex items-center justify-center text-[11px] font-semibold text-zinc-400">Not for launching</div>
+        <div className="mt-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-zinc-400">
+          <span className="w-2 h-2 rounded-full bg-zinc-300" />Workshop &amp; showroom
+        </div>
+      </>
+    );
+  }
+  const tb = wind && lim ? trailerBand(wind, lim) : null;
+  const sl = wind ? seaLine(wind) : null;
+  return (
+    <>
+      {wind && sl && tb && lim ? (
+        <SeaTank
+          s={severity(wind)} colors={SEA_BAND[tb]} className="h-12 sm:h-14"
+          surface={hsToTop(sl.hs)}
+          marks={{ calm: hsToTop(lim.calm), rough: hsToTop(lim.rough), dot: hsToTop(sl.hs) }}
+          label={`${name}: ${TRAILER_BAND_LABEL[tb]}. Today Hs ${sl.hs.toFixed(1)} m; example calm limit ${lim.calm} m, rough ${lim.rough} m.`}
+        />
+      ) : (
+        <div className="sea-tank h-12 sm:h-14" />
+      )}
+      <div className="mt-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide" style={{ color: tb ? BAND_STYLE[tb].hex : '#a1a1aa' }}>
+        <span className="w-2 h-2 rounded-full" style={{ background: tb ? BAND_STYLE[tb].hex : '#d4d4d8' }} />
+        {tb ? TRAILER_BAND_LABEL[tb] : error ? 'Wind unavailable' : 'Loading wind…'}
+      </div>
+      {sl && lim && <div className="mt-0.5 text-[11px] text-zinc-500 leading-tight">Hs {sl.hs.toFixed(1)} m{sl.estimated ? '*' : ''} · calm ≤{lim.calm} m</div>}
+    </>
+  );
+}
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {CATEGORIES.map((c) => {
-              const card = (
-                <>
-                  <div className="relative aspect-[4/3] w-full flex items-center justify-center p-4 sm:p-6">
-                    <img
-                      src={c.img}
-                      alt={`Extreme ${c.name} trailer`}
-                      className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
-                    />
-                    {c.live && (
-                      <span className="absolute top-3 right-3 bg-zinc-900 text-white text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full">
-                        3D
-                      </span>
-                    )}
-                  </div>
-                  <div className="px-4 sm:px-5 pb-5 text-left">
-                    <h3 className="text-base sm:text-lg font-bold tracking-tight leading-snug">{c.name}</h3>
-                    <span className={`mt-1 inline-block text-sm ${c.live ? 'text-[#13306b] font-semibold' : 'text-zinc-400'}`}>
-                      {c.live ? 'View EXT750 in 3D ›' : 'Coming soon'}
-                    </span>
-                  </div>
-                </>
-              );
-              const inShortlist = !highlighted || highlighted.includes(c.id);
-              const base = `group rounded-2xl sm:rounded-3xl bg-white border overflow-hidden text-left transition-all duration-500 ${
-                highlighted && inShortlist ? 'border-[#13306b] ring-2 ring-[#13306b]/40 scale-[1.02]' : 'border-zinc-200/80'
-              } ${inShortlist ? '' : 'opacity-35 grayscale'}`;
-              return c.live ? (
-                <button
-                  key={c.id}
-                  onClick={onOpenBuilder}
-                  className={`${base} cursor-pointer shadow-sm hover:shadow-xl transition-shadow`}
-                >
-                  {card}
-                </button>
-              ) : (
-                <div key={c.id} className={base}>
-                  {card}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Ross's recommendation, directly below the categories */}
+// AI Ross's recommendation card.
+export function RossPickCard({ pick }: { pick?: RossPick | null }) {
+  // Voice Ross picks from the 2026 range (data/range.ts); older picks may
+  // still be ids from the draft list in data/trailers.ts.
+  const model = pick ? findModel(pick.trailerId) : undefined;
+  const picked = pick && !model ? findTrailer(pick.trailerId) : undefined;
+  if (model) {
+    const link = builderLinkFor(model.id);
+    const family = FAMILIES.find((f) => f.id === model.family)!;
+    return (
+      <div id="ross-pick" className="mt-14 sm:mt-20 rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <div className="relative lg:col-span-7 aspect-[4/3] lg:aspect-auto lg:min-h-[420px] bg-gradient-to-b from-white to-zinc-100">
+          {model.id === 'ext750-maxi-roller' ? (
+            <Trailer3DViewer finishId="galv-iso" />
+          ) : (
+            <img src={CATEGORY_IMG(FAMILY_CATEGORY[model.family])} alt={model.name} className="absolute inset-0 w-full h-full object-contain p-8" />
+          )}
+        </div>
+        <div className="lg:col-span-5 p-6 sm:p-10 flex flex-col">
+          <span className="text-xs font-bold uppercase tracking-wide text-[#13306b]">AI Ross recommends</span>
+          <h3 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tighter">{model.name}</h3>
+          <p className="mt-1 text-sm text-zinc-500">{family.name} trailer</p>
+          {pick?.reason && <p className="mt-5 text-lg text-zinc-700 leading-snug">“{pick.reason}”</p>}
+          <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div><dt className="text-zinc-500">Boat up to</dt><dd className="font-semibold">{model.maxBoatM} m · {model.capacityKg.toLocaleString('en-GB')} kg</dd></div>
+            <div><dt className="text-zinc-500">Gross weight</dt><dd className="font-semibold">{model.grossKg.toLocaleString('en-GB')} kg</dd></div>
+            <div><dt className="text-zinc-500">Brakes</dt><dd className="font-semibold">{model.grossKg > 750 ? 'Braked' : 'Unbraked'}</dd></div>
+            <div><dt className="text-zinc-500">From</dt><dd className="font-semibold">£{model.priceIncVat.toLocaleString('en-GB')} inc VAT</dd></div>
+          </dl>
+          {!model.roadLegal && <p className="mt-4 text-sm text-zinc-600">Launching trolley: not for road use.</p>}
+          {link && (
+            <a href={link} className="mt-6 self-start px-5 py-2.5 rounded-full bg-[#13306b] text-white text-sm font-semibold hover:bg-[#0d2350]">
+              Build it in the Trailer Builder
+            </a>
+          )}
+          <p className="mt-auto pt-5 text-xs text-zinc-400">RRP from Extreme&rsquo;s 2026 price list. Ross to confirm.</p>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <>
           {picked && (
             <div id="ross-pick" className="mt-14 sm:mt-20 rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
               <div className="relative lg:col-span-7 aspect-[4/3] lg:aspect-auto lg:min-h-[420px] bg-gradient-to-b from-white to-zinc-100">
@@ -161,16 +181,9 @@ export const RangeOverview: React.FC<Props> = ({ onOpenBuilder, rossPanel, highl
                     Draft: specifications still to be confirmed by Extreme.
                   </p>
                 )}
-                {picked.has3D && (
-                  <button onClick={onOpenBuilder} className="mt-6 self-start px-5 py-2.5 rounded-full bg-[#13306b] text-white text-sm font-semibold hover:bg-[#0d2350] cursor-pointer">
-                    Customise this trailer
-                  </button>
-                )}
               </div>
             </div>
           )}
-        </div>
-      </section>
     </>
   );
-};
+}

@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import BuildTrailerReveal from '../BuildTrailerReveal';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { ScrollRevealShowcase } from '../ScrollRevealShowcase';
 import { variationsData } from '../../data/sampleImages';
 import { Play, Pause, RotateCcw, Sliders, ChevronDown } from 'lucide-react';
-import { SlitherNavPanel } from '../SlitherNavPanel';
+import AiAssistantButton from '../AiAssistantButton';
+import IntroSoundtrack from '../IntroSoundtrack';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -706,6 +708,8 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
       {/* STAGE: Full SVG Mask Venetian Blinds Transitions */}
       <section ref={stageRef} className="stage relative z-20">
         <div className="layers">
+          {/* Opening soundtrack, with its on/off button (inside the sticky frame so it stays on screen). */}
+          <IntroSoundtrack />
           {/* Base Background Image directly behind the logo */}
           <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
             <img
@@ -793,7 +797,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             <button
               onClick={scrollToStage}
               aria-label="Scroll down to explore"
-              className="group flex flex-col items-center text-white/80 hover:text-white transition-colors cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+              className="group p-3 -m-3 flex flex-col items-center text-white/80 hover:text-white transition-colors cursor-pointer drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
             >
               <ChevronDown className="w-6 h-6 animate-bounce text-white/90" />
             </button>
@@ -841,7 +845,8 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
       </section>
 
       {/* Space of White Background with 'Build The Right Trailer. First Time.' */}
-      <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 pt-[140px] sm:pt-[190px] md:pt-[220px] pb-0 px-6 flex flex-col items-center justify-center font-sf text-center">
+      {/* Pinned field of trailer photos around the headline -- BuildTrailerReveal.tsx. */}
+      <BuildTrailerReveal>
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tighter text-zinc-900 font-sf mb-5 leading-[1.05]">
             Build The Right Trailer.
@@ -852,32 +857,20 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             Trailers to suit RIBs, powerboats, sail boats, dinghies and jetskis — built live with AI Ross, our voice-cloned trailer builder that finds your exact spec in 60 seconds.
           </p>
 
-          {/* Launch AI Trailer Builder: circular icon button that
-              expands into a pill on hover, revealing the label. */}
+          {/* Launch AI Trailer Builder: animated AI.Assistant orb. */}
           <div className="w-full flex justify-center">
-            <SlitherNavPanel
-              idPrefix="interstitial"
-              theme="glass-light"
-              variant="button"
-              chrome="expand"
-              onClick={onTrailerRangeClick}
-              label="Launch AI Trailer Builder"
-              width={88}
-              height={88}
-              expandedWidth={360}
-              fontSize={17}
-            />
+            <AiAssistantButton onClick={onTrailerRangeClick} />
           </div>
         </div>
-      </section>
+      </BuildTrailerReveal>
 
       {/* Last Screen Panel: scroll-pinned video showcase. The trailer
           configurator that used to live here has moved to its own
           Trailer Range page (see TrailerRangePage.tsx / App.tsx), reached
           from the nav's TRAILER RANGE item. Text copy here is placeholder,
           to be replaced. */}
-      <section id="next-random-grid" className="relative z-20 w-full bg-[#eef2f8]">
-        <ScrollRevealShowcase />
+      <section id="next-random-grid" className="relative z-20 w-full showcase-wrap">
+        <ScrollRevealShowcase onAskRoss={onTrailerRangeClick} />
       </section>
 
     </div>

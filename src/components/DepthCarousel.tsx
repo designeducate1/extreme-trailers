@@ -12,6 +12,8 @@ export interface DepthCarouselItem {
   video: string;
   poster?: string;
   alt?: string;
+  /** WebVTT captions for the clip, shown when `captionsOn`. */
+  captions?: string;
 }
 
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -79,6 +81,22 @@ interface DepthCarouselProps {
    *  navigates. Defaults to true (muted), matching autoplay-safe
    *  behaviour out of the box. */
   activeMuted?: boolean;
+  /** Controlled front card: when this changes the carousel turns to it.
+   *  Visitors can still browse freely in between. */
+  activeIndex?: number;
+  /** false: the front clip plays once (e.g. with sound on) and
+   *  `onActiveEnded` fires at its end instead of it looping. */
+  loopActive?: boolean;
+  onActiveEnded?: (index: number) => void;
+  /** Front clip's playback position, for progress UI. */
+  onActiveTime?: (index: number, current: number, duration: number) => void;
+  /** Clicking the front card (not a back one) calls this. */
+  onActiveClick?: (index: number) => void;
+  /** Pause every clip (e.g. while a full-screen player is open). */
+  paused?: boolean;
+  captionsOn?: boolean;
+  /** Bump to restart the front clip from the beginning. */
+  restartKey?: number;
 }
 
 const DepthCarousel: React.FC<DepthCarouselProps> = ({
@@ -106,6 +124,14 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   className = '',
   enableWheel = true,
   activeMuted = true,
+  activeIndex,
+  loopActive = true,
+  onActiveEnded,
+  onActiveTime,
+  onActiveClick,
+  paused = false,
+  captionsOn = false,
+  restartKey = 0,
 }) => {
   const data = useMemo(() => items, [items]);
   const count = data.length;
@@ -114,6 +140,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const stageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const overlayRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const posRef = useRef(0);
   const focusRef = useRef(0);
@@ -249,7 +276,8 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
     const ro = new ResizeObserver((entries) => {
       const w = entries[0].contentRect.width;
       const cfg = cfgRef.current;
-      const needed = cfg.cardWidth + Math.abs(cfg.spread) * 2 + 120;
+      // Phones: arrows overlap the card edge, so keep only a small side margin.
+      const needed = cfg.cardWidth + Math.abs(cfg.spread) * 2 + (w < 520 ? 24 : 120);
       scaleRef.current = clamp(w / needed, 0.4, 1);
       layout(posRef.current);
     });
@@ -345,9 +373,13 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const onCardClick = useCallback(
     (index: number) => {
       if (dragRef.current?.moved) return;
+      if (index === focusRef.current && onActiveClick) {
+        onActiveClick(index);
+        return;
+      }
       setFocus(index, true);
     },
-    [setFocus]
+    [setFocus, onActiveClick]
   );
 
   useEffect(() => {
@@ -399,6 +431,39 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
     layout(posRef.current);
   }, [layout, depth, spread, tilt, tiltDirection, visibleCards, falloff, blur, cardWidth, cardHeight, radius, count]);
 
+  // Controlled front card.
+  useEffect(() => {
+    if (activeIndex === undefined || activeIndex === focusRef.current) return;
+    setFocus(activeIndex, true);
+  }, [activeIndex, setFocus]);
+
+  // Only the front clip plays; the rest rest on their posters, and only
+  // the front one's neighbours preload, so seven clips don't all stream.
+  useEffect(() => {
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return;
+      if (i === active && !paused) {
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    });
+  }, [active, paused]);
+
+  useEffect(() => {
+    if (!restartKey) return;
+    const v = videoRefs.current[focusRef.current];
+    if (v) { v.currentTime = 0; v.play().catch(() => {}); }
+  }, [restartKey]);
+
+  // Captions follow the toggle.
+  useEffect(() => {
+    videoRefs.current.forEach((v) => {
+      if (!v) return;
+      for (const t of Array.from(v.textTracks)) t.mode = captionsOn ? 'showing' : 'hidden';
+    });
+  }, [captionsOn, active]);
+
   useEffect(
     () => () => {
       tweenRef.current?.kill();
@@ -439,15 +504,26 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
           >
             <video
               className="depth-carousel__img"
+              ref={(el) => {
+                videoRefs.current[i] = el;
+              }}
               src={item.video}
               poster={item.poster}
               aria-label={item.alt || ''}
-              autoPlay
               muted={i === active ? activeMuted : true}
-              loop
+              loop={i === active ? loopActive : true}
+              preload={Math.abs(i - active) <= 1 || (loop && Math.abs(i - active) === count - 1) ? 'auto' : 'none'}
               playsInline
               draggable={false}
-            />
+              onEnded={() => { if (i === active) onActiveEnded?.(i); }}
+              onTimeUpdate={(e) => {
+                if (i !== active || !onActiveTime) return;
+                const v = e.currentTarget;
+                onActiveTime(i, v.currentTime, v.duration || 0);
+              }}
+            >
+              {item.captions && <track kind="captions" src={item.captions} srcLang="en" label="English" />}
+            </video>
             <span
               className="depth-carousel__tint"
               ref={(el) => {

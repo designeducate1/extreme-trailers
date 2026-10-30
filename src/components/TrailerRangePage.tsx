@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TrailerConfiguratorPanel } from './TrailerConfiguratorPanel';
-import { SlitherNavPanel } from './SlitherNavPanel';
+import AiAssistantButton from './AiAssistantButton';
 import { RangeOverview } from './RangeOverview';
+import { RangeFinder } from './RangeFinder';
 import { RossPanel } from './RossPanel';
 import { useRoss } from '../hooks/useRoss';
 
@@ -19,13 +19,15 @@ const scrollTo = (id: string) =>
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }) => {
+  // The orb starts voice Ross (Ultravox); the corner icon on every page is
+  // the typed chat (RossChat, OpenAI).
   const ross = useRoss();
   const [rossOpen, setRossOpen] = useState(false);
 
   const openRoss = () => {
     setRossOpen(true);
     ross.refresh();
-    setTimeout(() => scrollTo('trailer-categories'), 50);
+    setTimeout(() => scrollTo('find-your-trailer'), 50);
   };
   const closeRoss = () => {
     ross.stop();
@@ -36,43 +38,45 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }
     <div className="relative z-20 w-full min-h-screen bg-white">
       {/* Intro: same style as the homepage interstitial, with Trailer Range copy.
           The round button scrolls down to the configurator. */}
-      <section className="relative w-full bg-[#eef2f8] text-zinc-900 pt-[120px] sm:pt-[150px] md:pt-[170px] pb-16 sm:pb-20 px-6 flex flex-col items-center justify-center font-sf text-center">
-        <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
+      <section className="relative overflow-hidden isolate w-full bg-[#eef2f8] text-zinc-900 pt-[120px] sm:pt-[150px] md:pt-[170px] pb-16 sm:pb-20 px-6 flex flex-col items-center justify-center font-sf text-center">
+        {/* Background: a car reversing a boat down a slipway, softly blurred
+            under a pale wash so the heading and copy stay easy to read. */}
+        <video
+          className="absolute inset-0 -z-10 w-full h-full object-cover scale-110 blur-[6px]"
+          src="/videos/slipway-bg.mp4"
+          poster="/videos/posters/slipway-bg.jpg"
+          autoPlay muted loop playsInline preload="metadata" aria-hidden="true"
+        />
+        <div className="absolute inset-0 -z-10 bg-[#eef2f8]/70" aria-hidden="true" />
+        <div className="relative max-w-4xl mx-auto flex flex-col items-center justify-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tighter text-zinc-900 font-sf mb-5 leading-[1.05]">
             Matched To Your Boat.
             <br />
             Built To Last.
           </h2>
-          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-500 font-normal tracking-normal font-sf leading-relaxed mb-12">
+          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-600 font-normal tracking-normal font-sf leading-relaxed mb-12">
             Every Extreme is built in Southampton. Let AI Ross ask a few quick questions, what you tow, where you launch, beach or slip and show you the exact trailer to buy.
           </p>
           <div className="w-full flex justify-center">
-            <SlitherNavPanel
-              idPrefix="range-intro"
-              theme="glass-light"
-              variant="button"
-              chrome="expand"
-              onClick={openRoss}
-              label="Build Your Trailer With AI Ross"
-              width={88}
-              height={88}
-              expandedWidth={430}
-              fontSize={17}
-            />
+            <AiAssistantButton onClick={openRoss} label="Build Your Trailer With AI Ross" />
           </div>
 
           {/* Second route for people who'd rather choose without Ross */}
           <button
-            onClick={() => scrollTo('trailer-categories')}
-            className="mt-8 text-sm sm:text-base font-medium text-zinc-600 hover:text-black underline underline-offset-4 decoration-zinc-300 hover:decoration-black transition-colors cursor-pointer"
+            onClick={() => scrollTo('find-your-trailer')}
+            className="mt-8 text-sm sm:text-base font-medium text-zinc-700 hover:text-black underline underline-offset-4 decoration-zinc-300 hover:decoration-black transition-colors cursor-pointer"
           >
             Or browse the range and choose yourself
           </button>
         </div>
       </section>
 
-      <RangeOverview
-        onOpenBuilder={() => scrollTo('trailer-builder')}
+      <RangeOverview />
+
+      {/* Explore The Range: AI Ross, live launch conditions, trailer types,
+          shop by boat, fit check and the whole 2026 range. */}
+      <RangeFinder
+        onAskRoss={openRoss}
         highlighted={rossOpen || ross.pick ? ross.highlighted : null}
         pick={ross.pick}
         rossPanel={
@@ -90,17 +94,6 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }
         }
       />
 
-      <div id="trailer-builder" className="scroll-mt-24">
-        <TrailerConfiguratorPanel />
-      </div>
-      <div className="w-full flex justify-center py-6 bg-white border-t border-zinc-200">
-        <button
-          onClick={onBackHome}
-          className="text-xs font-sans-ui text-zinc-500 hover:text-black underline cursor-pointer transition-colors"
-        >
-          Back to Home
-        </button>
-      </div>
     </div>
   );
 };

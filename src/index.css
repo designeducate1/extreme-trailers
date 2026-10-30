@@ -7,6 +7,11 @@
   --page-padding: 3vw;
 }
 
+/* Phones: nothing may push the page sideways. `clip` (not `hidden`) keeps
+   position: sticky working on the scroll panels. */
+html, body { overflow-x: clip; }
+body { -webkit-text-size-adjust: 100%; }
+
 /* SF Pro / San Francisco Apple Typography */
 .font-sf {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'San Francisco', system-ui, sans-serif;
@@ -48,8 +53,9 @@
 .layers {
   position: sticky;
   top: 4rem;
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 4rem);
+  height: calc(100svh - 4rem); /* iPhone Safari: ignore the moving address bar */
   overflow: hidden;
 }
 
@@ -72,10 +78,21 @@
   inset: 0;
   pointer-events: none;
 }
+/* Dark "wet shingle" shade behind the hero text: warm earth tones,
+   strongest at the lower left where the paragraph sits, gone by
+   mid-picture, so the white copy reads over snow without a box. */
+.texts::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 75% at 0% 72%, rgba(22, 16, 10, 0.62) 0%, rgba(22, 16, 10, 0.32) 45%, rgba(22, 16, 10, 0) 75%),
+    linear-gradient(90deg, rgba(22, 16, 10, 0.34) 0%, rgba(22, 16, 10, 0.12) 38%, rgba(22, 16, 10, 0) 60%);
+}
 
 .txt {
   position: absolute;
-  width: 100%;
+  width: calc(100% - 6vw); /* sits inside .texts' 3vw padding */
   color: #fff;
   text-transform: uppercase;
   clip-path: inset(100% 0 0 0);
@@ -98,21 +115,23 @@
   letter-spacing: 0.24em;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'San Francisco', system-ui, sans-serif;
-  opacity: 0.85;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 0 16px rgba(0, 0, 0, 0.3);
 }
 
 .txt span {
   display: block;
-  font-size: clamp(1rem, 0.8vw, 1.15rem);
-  max-width: 480px;
+  font-size: clamp(1.05rem, 0.95vw, 1.25rem);
+  max-width: 500px;
   width: 35%;
   margin-top: 24px;
-  line-height: 1.8;
-  letter-spacing: normal;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
   text-transform: none;
-  font-weight: 400;
+  font-weight: 500;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'SF Pro', 'San Francisco', system-ui, sans-serif;
-  opacity: 0.85;
+  /* Solid white plus a soft shadow so it holds up over snow. */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 0, 0, 0.35);
 }
 
 @media screen and (max-width: 1024px) {
@@ -122,9 +141,13 @@
 }
 
 @media screen and (max-width: 599px) {
+  .txt h1 { font-size: min(3.8rem, 12.5vw); } /* longest word must fit a 360px Android */
+  .txt h2 { font-size: min(1.2rem, 4.2vw); letter-spacing: 0.18em; }
   .txt span {
-    width: 85%;
+    width: 92%;
+    line-height: 1.6;
   }
+  .progress-bar-container { padding: 2rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom)); }
 }
 
 /* Progress bar */
@@ -523,7 +546,7 @@
   --round: 8px;
   --p-x: 5px;
   --p-y: 3px;
-  --w-label: 116px;
+  --w-label: 130px;
   --color-secondary: #062e69;
   --color-pure: #062e69;
   --muted: rgba(6, 46, 105, 0.15);
@@ -546,7 +569,7 @@
 
 @media (max-width: 1200px) {
   .banner-nav-wrap {
-    --w-label: 104px;
+    --w-label: 114px;
   }
 }
 
@@ -881,3 +904,55 @@
   color: rgba(15, 23, 42, 0.55);
 }
 
+
+/* ---- Sea tank (Explore The Range) ----------------------------------------
+   Rotating-blob water adapted from the "e-card" by MikeAndrewDesigner,
+   Uiverse.io (MIT licence). Driven by --surface, --r, --dur, --c1, --c2. */
+.sea-tank {
+  position: relative; overflow: hidden; border-radius: 14px;
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  isolation: isolate;
+}
+.sea-wave {
+  position: absolute; top: var(--surface);
+  width: var(--size);
+  height: auto;
+  left: calc((100% - var(--size)) / 2);
+  -webkit-transform: translateZ(0); /* own layer on iPhone Safari */
+  border-radius: var(--r);
+  background: linear-gradient(180deg, var(--c1) 0%, var(--c2) 35%);
+  opacity: var(--op, 0.55);
+  animation: sea-turn var(--dur) linear infinite;
+  transition: top 1.2s ease, border-radius 1.2s ease;
+}
+/* Square shape the old-fashioned way (padding % follows width), because some
+   iPhone Safari versions ignore aspect-ratio on absolutely positioned boxes. */
+.sea-wave::before { content: ''; display: block; padding-top: 100%; }
+.sea-wave:nth-child(2) { opacity: 0.45; left: calc((100% - var(--size)) / 2 - 18%); animation-duration: calc(var(--dur) * 1.35); animation-delay: calc(var(--dur) * -0.4); margin-top: 2px; }
+.sea-wave:nth-child(3) { opacity: 0.35; left: calc((100% - var(--size)) / 2 + 22%); animation-duration: calc(var(--dur) * 0.8); animation-delay: calc(var(--dur) * -0.7); margin-top: 4px; }
+.sea-tank.is-paused .sea-wave { animation-play-state: paused; }
+@keyframes sea-turn { from { transform: rotate(0deg) translateZ(0); } to { transform: rotate(360deg) translateZ(0); } }
+.sea-mark {
+  position: absolute; left: 0; right: 0; height: 0; z-index: 2;
+  border-top: 1px dashed rgba(14, 116, 144, 0.7);
+}
+.sea-mark-danger { border-top-color: rgba(190, 18, 60, 0.75); }
+.sea-mark-calm { border-top-color: rgba(22, 163, 74, 0.85); }
+.sea-mark.sea-mark-calm span { color: rgba(21, 128, 61, 0.95); right: auto; left: 6px; } /* calm label left, rough label right */
+/* Today's live wave height on a trailer card */
+.sea-dot {
+  position: absolute; left: 50%; z-index: 3;
+  width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px;
+  border-radius: 999px; background: #111827;
+  box-shadow: 0 0 0 2px #fff, 0 1px 4px rgba(0, 0, 0, 0.35);
+  transition: top 1.2s ease;
+}
+.sea-mark span {
+  position: absolute; right: 6px; top: -7px;
+  padding: 0 4px; border-radius: 4px; line-height: 13px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: rgba(14, 116, 144, 0.9);
+}
+.sea-mark-danger span { color: rgba(190, 18, 60, 0.9); }
+@media (prefers-reduced-motion: reduce) { .sea-wave { animation: none; } }

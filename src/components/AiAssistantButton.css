@@ -1,0 +1,70 @@
+/* "AI.Assistant" orb button -- after Uiverse.io (dexter-st), recoloured to
+   Extreme's blues with a navy core so the white letters read on the pale
+   section background. */
+.ai-orb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 105px;
+  height: 105px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #12306b 0%, #0d2352 70%);
+  color: #fff;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 13px 28px -9px rgba(13, 35, 82, 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.ai-orb:hover { transform: scale(1.04); box-shadow: 0 15px 32px -9px rgba(13, 35, 82, 0.65); }
+.ai-orb:active { transform: scale(0.98); }
+.ai-orb:focus-visible { outline: 3px solid #5cc8ff; outline-offset: 4px; }
+
+.ai-orb__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: ai-orb-rotate 2s linear infinite;
+  z-index: 0;
+}
+@keyframes ai-orb-rotate {
+  0% {
+    transform: rotate(90deg);
+    box-shadow: 0 7px 14px 0 #fff inset, 0 14px 21px 0 #5cc8ff inset, 0 42px 42px 0 #1e5bd8 inset;
+  }
+  50% {
+    transform: rotate(270deg);
+    box-shadow: 0 7px 14px 0 #fff inset, 0 14px 7px 0 #3b82f6 inset, 0 28px 42px 0 #0d2352 inset;
+  }
+  100% {
+    transform: rotate(450deg);
+    box-shadow: 0 7px 14px 0 #fff inset, 0 14px 21px 0 #5cc8ff inset, 0 42px 42px 0 #1e5bd8 inset;
+  }
+}
+
+.ai-orb__letter {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  opacity: 0.45;
+  animation: ai-orb-letter 2s infinite;
+}
+@keyframes ai-orb-letter {
+  0%, 100% { opacity: 0.45; transform: translateY(0); }
+  20% { opacity: 1; transform: scale(1.15); }
+  40% { opacity: 0.75; transform: translateY(0); }
+}
+
+@media (max-width: 599px) {
+  .ai-orb { width: 90px; height: 90px; font-size: 0.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-orb__ring { animation: none; box-shadow: 0 7px 14px 0 #fff inset, 0 14px 21px 0 #5cc8ff inset, 0 42px 42px 0 #1e5bd8 inset; }
+  .ai-orb__letter { animation: none; opacity: 1; }
+}

@@ -14,7 +14,8 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { TRAILERS, CATEGORY_NAMES } from '../../src/data/trailers';
+import { CATEGORY_NAMES } from '../../src/data/trailers';
+import { MODELS, FAMILIES, FAMILY_CATEGORY } from '../../src/data/range';
 
 const env = (k: string, fallback = '') => (process.env[k] ?? fallback).trim();
 
@@ -34,11 +35,15 @@ function writeCount(count: number) {
 
 // ---- what Ross knows and how he behaves ----
 function rossInstructions(): string {
-  const list = TRAILERS.map((t) =>
-    `- id "${t.id}": ${t.name} (${CATEGORY_NAMES[t.category]}). Carries a boat of up to ${t.maxBoatKg}kg ` +
-    `(${t.grossKg}kg gross${t.braked ? ', braked' : ', unbraked'}, ${t.axles === 2 ? 'twin' : 'single'} axle). ` +
-    `Hull support: ${t.support}. Suits: ${t.suits.join('; ')}.`
-  ).join('\n');
+  // The full 2026 range (data/range.ts), grouped by family.
+  const list = FAMILIES.map((f) => {
+    const rows = MODELS.filter((m) => m.family === f.id).map((m) =>
+      `  - id "${m.id}": ${m.name}. Boat up to ${m.maxBoatM} m and ${m.capacityKg} kg (boat, engine and kit); ` +
+      `${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}; ${m.supports ?? '-'} supports; ` +
+      `£${m.priceIncVat.toLocaleString('en-GB')} inc VAT${m.roadLegal ? '' : '; NOT for road use'}.`
+    ).join('\n');
+    return `${f.name} (category "${FAMILY_CATEGORY[f.id]}"): ${f.blurb}\n${rows}`;
+  }).join('\n\n');
 
   return `
 You are "AI Ross", the voice assistant on the Extreme Trailers website. Extreme Trailers builds boat trailers in Southampton, UK.
@@ -48,7 +53,7 @@ YOUR JOB
 Find the right trailer for the visitor by asking short questions, ONE at a time, then show them the best match on screen.
 
 ASK IN THIS ORDER (skip anything they've already told you)
-1. What do they tow? (RIB, powerboat, sailing boat, dinghy, jetski / PWC, or fully inflatable boat). As soon as you know, call highlightCategories with the categories that could suit.
+1. What do they tow? (RIB, powerboat, fishing boat, sailing dinghy, fixed-keel yacht, jetski, inflatable, racing cat, or kayaks and paddleboards). As soon as you know, call highlightCategories with the categories that could suit.
 2. How long is the boat? Accept feet or metres.
 3. Roughly how heavy is it, including the engine, fuel and kit? Add 10 percent for safety, as Extreme recommends. If they don't know, give a rough estimate from the type and length and say clearly it is only an estimate.
 4. Where do they launch: a beach or a slipway? Rollers make launching and recovery easier on shallow slips; bunks or a launcher can suit other boats. Keep this general.
@@ -57,12 +62,12 @@ Then recommend ONE trailer, and at most one alternative. Call showTrailer with i
 
 STRICT RULES
 - Only recommend trailers from the list below, using their exact names. Never invent a model, a measurement or a feature.
-- The trailer's boat limit must be at least the boat weight plus 10 percent. If nothing on the list fits (for example jetskis, keel boats, or very large boats), say so honestly and suggest they call the Extreme team, who can advise or build bespoke.
-- Do not quote prices. If asked, say the team will confirm current prices.
+- The trailer's boat limit must be at least the boat weight plus 10 percent. If nothing on the list fits (for example boats over 6.75 m or over 2,850 kg), say so honestly and suggest they call the Extreme team, who can advise or build bespoke.
+- Only give a price if asked. Say it as "from" the RRP on the list, including VAT, and that the team will confirm.
 - Keep every reply short: one or two sentences, friendly and plain British English. No lists read aloud.
 - This is a short call. After recommending, ask if there's anything else, then say goodbye.
 
-TRAILERS YOU MAY RECOMMEND (draft list)
+TRAILERS YOU MAY RECOMMEND (Extreme's 2026 range; use the id with showTrailer)
 ${list}
 
 CATEGORY NAMES for highlightCategories: ${Object.keys(CATEGORY_NAMES).join(', ')}
@@ -114,7 +119,7 @@ export default async (req: Request) => {
           modelToolName: 'showTrailer',
           description: 'Show the recommended trailer in the panel on screen. Use only an id from the list.',
           dynamicParameters: [
-            { name: 'trailerId', location: 'PARAMETER_LOCATION_BODY', required: true, schema: { type: 'string', enum: TRAILERS.map((t) => t.id) } },
+            { name: 'trailerId', location: 'PARAMETER_LOCATION_BODY', required: true, schema: { type: 'string', enum: MODELS.map((m) => m.id) } },
             { name: 'reason', location: 'PARAMETER_LOCATION_BODY', required: true, schema: { type: 'string', description: 'One short sentence on why it suits them.' } },
           ],
           client: {},

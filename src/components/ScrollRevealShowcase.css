@@ -10,6 +10,24 @@
   color: #121212;
   font-family: "Outfit", sans-serif;
 }
+/* Pull the section up over the empty tail of the trailer-photo reveal
+   above it (its sticky frame ends with blank space under the AI button),
+   leaving a normal gap instead of half a screen. */
+.reveal-showcase {
+  position: relative;
+  z-index: 21;
+  margin-top: -37vh;
+  pointer-events: none;   /* its empty layout boxes overlap the AI button above */
+}
+.reveal-showcase .content,
+.reveal-showcase .video-wrapper { pointer-events: auto; }
+/* The wrapper section moves up with it; its background stays clear over
+   that overlap so the AI button above shows through. */
+.showcase-wrap { background: linear-gradient(to bottom, transparent 0, transparent 37vh, #eef2f8 37vh); pointer-events: none; }
+@media (max-width: 768px) {
+  .reveal-showcase { margin-top: -22vh; }
+  .showcase-wrap { background: linear-gradient(to bottom, transparent 0, transparent 22vh, #eef2f8 22vh); }
+}
 
 .reveal-showcase .container {
   max-width: 1440px;
@@ -26,7 +44,7 @@
   display: flex;
   gap: 60px;
   justify-content: space-between;
-  max-width: 1100px;
+  max-width: 1240px;
   margin-inline: auto;
 }
 
@@ -81,7 +99,7 @@
   flex-shrink: 1;
   height: 100vh;
   width: 100%;
-  max-width: 540px;
+  max-width: 720px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -105,9 +123,11 @@
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  height: 400px;
   width: 100%;
   border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   /* visible, not hidden: the depth carousel's stacked cards spread out
      sideways from the front card -- clipping here would cut that stack
      off at this box's edges. Each card keeps its own border-radius via
@@ -123,26 +143,168 @@
   object-position: center;
 }
 
-.reveal-showcase .video-mute-btn {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(18, 18, 18, 0.55);
-  color: #fff;
+/* The clips: a big 16:9 stage, a control bar and named chapter chips. */
+.reveal-showcase .showcase-stage {
+  position: relative;
+  height: min(420px, 52vh);
+}
+/* The carousel's own 320px floor would spill out of the shorter phone stage. */
+.reveal-showcase .showcase-stage .depth-carousel { min-height: 0; }
+.reveal-showcase .showcase-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 0 6px;
+}
+.reveal-showcase .showcase-spacer { flex: 1; }
+.reveal-showcase .showcase-hear,
+.reveal-showcase .showcase-icon,
+.reveal-showcase .showcase-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  font: 600 14px/1 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background-color 0.15s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.reveal-showcase .showcase-hear {
+  padding: 0 16px;
+  background: #12306b;
+  color: #fff;
+}
+.reveal-showcase .showcase-hear.is-on { background: rgba(18, 18, 18, 0.08); color: #121212; }
+.reveal-showcase .showcase-icon {
+  width: 40px;
+  justify-content: center;
+  background: rgba(18, 18, 18, 0.06);
+  color: #121212;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.reveal-showcase .showcase-icon.is-on { background: #12306b; color: #fff; }
+.reveal-showcase .showcase-ask {
+  padding: 0 16px;
+  background: rgba(18, 18, 18, 0.06);
+  color: #121212;
+}
+.reveal-showcase .showcase-ask.is-lit { background: #D5FF37; }
+.reveal-showcase .showcase-hear:hover,
+.reveal-showcase .showcase-icon:hover,
+.reveal-showcase .showcase-ask:hover { transform: translateY(-1px); }
+.reveal-showcase .chapter-menu { position: relative; }
+.reveal-showcase .chapter-menu__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 14px 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: #12306b;
+  color: #fff;
+  font: 600 14px/1 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.reveal-showcase .chapter-menu__btn:hover { transform: translateY(-1px); }
+.reveal-showcase .chapter-menu__btn:focus-visible { outline: 3px solid #5cc8ff; outline-offset: 3px; }
+.reveal-showcase .chapter-menu__current { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Three bars that fold into an X. */
+.reveal-showcase .chapter-menu__bars { display: flex; flex-direction: column; justify-content: center; gap: 3px; width: 16px; height: 14px; }
+.reveal-showcase .chapter-menu__bars span {
+  display: block; height: 2px; width: 100%; border-radius: 50px; background: #fff; transition: transform 0.4s, opacity 0.4s;
+}
+.reveal-showcase .chapter-menu.is-open .chapter-menu__bars span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.reveal-showcase .chapter-menu.is-open .chapter-menu__bars span:nth-child(2) { transform: translateX(-50%); opacity: 0; }
+.reveal-showcase .chapter-menu.is-open .chapter-menu__bars span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+/* The list unfolds from the button (clip-path), items rising in turn. */
+.reveal-showcase .chapter-menu__list {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);   /* desktop: opens upward over the video */
+  z-index: 40;
+  width: 210px;
+  padding: 6px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px -14px rgba(13, 35, 82, 0.35), 0 0 0 1px rgba(13, 35, 82, 0.08);
+  clip-path: inset(0% 50% 100% 50% round 14px);
+  pointer-events: none;
+  transition: clip-path 0.4s ease;
+}
+.reveal-showcase .chapter-menu.is-open .chapter-menu__list { clip-path: inset(0% 0% 0% 0% round 14px); pointer-events: auto; }
+.reveal-showcase .chapter-menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #12306b;
+  font: 500 14px/1.2 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: background-color 0.2s, opacity 0.3s, transform 0.3s;
+}
+.reveal-showcase .chapter-menu.is-open .chapter-menu__item {
+  opacity: 1;
+  transform: translateY(0);
+  transition: background-color 0.2s, opacity 0.35s calc(0.12s + var(--i) * 0.05s), transform 0.35s calc(0.12s + var(--i) * 0.05s);
+}
+.reveal-showcase .chapter-menu__item:hover,
+.reveal-showcase .chapter-menu__item:focus-visible { background: #eef2f8; outline: none; }
+.reveal-showcase .chapter-menu__item.is-active { background: #12306b; color: #fff; font-weight: 600; }
+.reveal-showcase .chapter-menu__num { font: 500 11px/1 ui-monospace, 'SF Mono', Menlo, monospace; opacity: 0.55; }
+.reveal-showcase .chapter-menu__bar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  background: #D5FF37; transform-origin: left; transition: transform 0.25s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-showcase .chapter-menu__list,
+  .reveal-showcase .chapter-menu__item,
+  .reveal-showcase .chapter-menu__bars span { transition: none; }
 }
 
-.reveal-showcase .video-mute-btn:hover {
-  background: rgba(18, 18, 18, 0.8);
+/* Full-screen player. */
+.showcase-theatre {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000; /* above the site's fixed nav */
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(5, 8, 14, 0.92);
+  overscroll-behavior: contain;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+}
+.showcase-theatre__frame { width: min(1100px, 100%); color: #fff; }
+.showcase-theatre__head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.showcase-theatre__eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+.showcase-theatre__head strong { font-size: 18px; }
+.showcase-theatre__close {
+  margin-left: auto;
+  width: 40px; height: 40px;
+  border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 16px; cursor: pointer;
+}
+.showcase-theatre__video { width: 100%; max-height: 72vh; border-radius: 14px; background: #000; display: block; }
+.showcase-theatre__foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+.showcase-theatre__foot button:not(.showcase-ask) {
+  height: 40px; padding: 0 14px; border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12); color: #fff; font: 600 14px/1 inherit; cursor: pointer;
+}
+.showcase-theatre .showcase-ask {
+  height: 40px; padding: 0 16px; border: 0; border-radius: 999px;
+  background: #D5FF37; color: #121212; font: 600 14px/1 inherit; cursor: pointer;
 }
 
 @media (max-width: 900px) {
@@ -167,13 +329,24 @@
     max-width: 100%;
   }
 
+  /* Phones: the clips sit sticky under the nav while the sections
+     scroll beneath, each section still turning to its clip. */
   .reveal-showcase .arch__right .video-wrapper {
-    position: static;
+    order: -1;
+    position: sticky;
+    top: 72px;
+    z-index: 5;
     transform: none;
-    height: 360px;
     width: 100%;
-    margin-bottom: 20px;
+    gap: 8px;
+    padding: 6px 0 10px;
+    background: #eef2f8;
   }
+  .reveal-showcase .showcase-stage { height: 230px; }
+  .reveal-showcase .chapter-menu__current { max-width: 96px; }
+  /* Phones: the strip sits at the top, so the list drops down. */
+  .reveal-showcase .chapter-menu__list { bottom: auto; top: calc(100% + 8px); }
+  .reveal-showcase .chapter-menu__btn { height: 44px; }
 
   .reveal-showcase .arch__left .arch__info {
     height: auto;
@@ -190,8 +363,15 @@
     padding: 10px;
   }
 
-  .reveal-showcase .arch__right .video-wrapper {
-    border-radius: 10px;
-    height: 280px;
-  }
+  .reveal-showcase .showcase-stage { height: 200px; }
+  .reveal-showcase .showcase-ask { padding: 0 12px; font-size: 13px; }
+  .reveal-showcase .showcase-ask__long,
+  .reveal-showcase .showcase-hear__text { display: none; }
+  .reveal-showcase .showcase-hear { width: 44px; padding: 0; justify-content: center; }
+  .reveal-showcase .showcase-hear,
+  .reveal-showcase .showcase-icon,
+  .reveal-showcase .showcase-ask { height: 44px; } /* comfortable tap size */
+  .reveal-showcase .showcase-icon { width: 44px; }
+  .showcase-theatre { padding: 12px; }
+  .showcase-theatre__foot button:not(.showcase-ask) { font-size: 12px; padding: 0 10px; }
 }
