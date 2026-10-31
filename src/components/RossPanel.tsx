@@ -1,6 +1,6 @@
-import React from 'react';
-import { Mic, MicOff, PhoneOff, Loader2 } from 'lucide-react';
-import type { RossInfo, RossPhase } from '../hooks/useRoss';
+import React, { useEffect, useRef, useState } from 'react';
+import { Mic, MicOff, PhoneOff, Loader2, Keyboard, Send } from 'lucide-react';
+import type { RossInfo, RossPhase, RossMode, RossLine } from '../hooks/useRoss';
 
 // The card that appears at the top of "Explore The Range" when someone
 // clicks the AI Ross button. It explains what Ross is BEFORE asking for
@@ -14,6 +14,27 @@ interface Props {
   onStart: () => void;
   onStop: () => void;
   onClose: () => void;
+  /** Typed rehearsal (test sites, ?rossRehearsal). */
+  mode?: RossMode;
+  rehearsalAvailable?: boolean;
+  transcript?: RossLine[];
+  onRehearse?: () => void;
+  onSay?: (text: string) => void;
+}
+
+/** Text box for typing to Ross in a rehearsal. */
+export function RehearsalInput({ onSay, busy, dark }: { onSay: (t: string) => void; busy?: boolean; dark?: boolean }) {
+  const [text, setText] = useState('');
+  return (
+    <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (!busy && text.trim()) { onSay(text); setText(''); } }}>
+      <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Type your answer to Ross…" aria-label="Your answer"
+        className={`flex-1 min-w-0 h-11 rounded-full px-4 text-[16px] outline-none border ${dark ? 'bg-white/10 border-white/25 text-white placeholder:text-white/50' : 'bg-white border-zinc-300 focus:border-[#13306b]'}`} />
+      <button type="submit" disabled={busy || !text.trim()} aria-label="Send"
+        className={`w-11 h-11 rounded-full grid place-items-center disabled:opacity-40 cursor-pointer ${dark ? 'bg-white text-[#13306b]' : 'bg-[#13306b] text-white'}`}>
+        <Send className="w-4 h-4" />
+      </button>
+    </form>
+  );
 }
 
 const Sparkle = () => (
@@ -31,11 +52,20 @@ const STATE_LABEL: Record<string, string> = {
   speaking: 'Ross is speaking',
 };
 
-export const RossPanel: React.FC<Props> = ({ phase, info, agentState, caption, onStart, onStop, onClose }) => {
+export const RossPanel: React.FC<Props> = ({ phase, info, agentState, caption, onStart, onStop, onClose, mode, rehearsalAvailable, transcript = [], onRehearse, onSay }) => {
   const minutes = Math.round((info.maxSeconds ?? 180) / 60);
   const btn = 'px-5 py-2.5 rounded-full text-sm font-semibold transition-colors cursor-pointer';
   const primary = `${btn} bg-[#13306b] text-white hover:bg-[#0d2350] inline-flex items-center gap-2`;
   const quiet = `${btn} text-zinc-600 hover:text-black`;
+
+  const log = useRef<HTMLDivElement>(null);
+  useEffect(() => { log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' }); }, [transcript.length, agentState]);
+
+  const rehearseBtn = rehearsalAvailable && onRehearse ? (
+    <button onClick={onRehearse} className={`${btn} border border-[#13306b] text-[#13306b] hover:bg-[#13306b]/5 inline-flex items-center gap-2`}>
+      <Keyboard className="w-4 h-4" /> Typed rehearsal (no minutes)
+    </button>
+  ) : null;
 
   let body: React.ReactNode;
   switch (phase) {
@@ -50,7 +80,7 @@ export const RossPanel: React.FC<Props> = ({ phase, info, agentState, caption, o
             Draft status: {info.message || 'switched off'}
             {info.maxTests ? ` · ${info.used ?? 0} of ${info.maxTests} test calls used` : ''}
           </p>
-          <div className="mt-5"><button onClick={onClose} className={quiet}>Close</button></div>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{rehearseBtn}<button onClick={onClose} className={quiet}>Close</button></div>
         </>
       );
       break;
@@ -79,6 +109,7 @@ export const RossPanel: React.FC<Props> = ({ phase, info, agentState, caption, o
             <button onClick={onStart} className={primary}>
               <Mic className="w-4 h-4" /> {phase === 'ended' ? 'Chat again' : 'Allow microphone & start'}
             </button>
+            {rehearseBtn}
             <button onClick={onClose} className={quiet}>No thanks, I'll browse</button>
           </div>
         </>
@@ -91,6 +122,25 @@ export const RossPanel: React.FC<Props> = ({ phase, info, agentState, caption, o
       body = <p className="text-zinc-700 inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Connecting to AI Ross…</p>;
       break;
     case 'live':
+      if (mode === 'rehearsal') {
+        body = (
+          <>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Typed rehearsal · same Ross, no Ultravox minutes</p>
+            <div ref={log} className="mt-4 max-h-72 overflow-y-auto text-left space-y-2">
+              {transcript.slice(-12).map((l, i) => (
+                <p key={i} className={l.text.startsWith('[on screen') ? 'text-xs text-emerald-700 font-mono' : l.speaker === 'agent' ? 'text-zinc-800' : 'text-zinc-500 text-right'}>
+                  {!l.text.startsWith('[on screen') && <span className="text-zinc-400 text-xs font-semibold mr-2">{l.speaker === 'agent' ? 'Ross' : 'You'}</span>}
+                  {l.text}
+                </p>
+              ))}
+              {agentState === 'thinking' && <p className="text-zinc-400 inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Ross is thinking…</p>}
+            </div>
+            <div className="mt-4">{onSay && <RehearsalInput onSay={onSay} busy={agentState === 'thinking'} />}</div>
+            <div className="mt-3"><button onClick={onStop} className={quiet}>End rehearsal</button></div>
+          </>
+        );
+        break;
+      }
       body = (
         <>
           <div className="flex items-center justify-center gap-2 text-sm font-semibold text-[#13306b]">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PhoneOff, Loader2 } from 'lucide-react';
 import { useRossContext, inCall } from '../hooks/RossContext';
+import { RehearsalInput } from './RossPanel';
 
 // While a voice call is running and the customer is away from the AI Ross
 // card (e.g. Ross has opened the Trailer Builder), a small bar in the corner
@@ -15,7 +16,7 @@ const STATE_LABEL: Record<string, string> = {
 };
 
 export default function RossCallBar({ hidden, raised }: { hidden?: boolean; raised?: boolean }) {
-  const { phase, agentState, caption, stop } = useRossContext();
+  const { phase, agentState, caption, stop, mode, say } = useRossContext();
   if (hidden || !inCall(phase)) return null;
 
   return (
@@ -28,7 +29,7 @@ export default function RossCallBar({ hidden, raised }: { hidden?: boolean; rais
         {phase === 'connecting'
           ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
           : <span className={`w-2 h-2 rounded-full bg-emerald-400 ${agentState === 'speaking' ? 'animate-pulse' : ''}`} />}
-        AI Ross · {phase === 'connecting' ? 'Connecting…' : STATE_LABEL[agentState] ?? 'Live'}
+        AI Ross{mode === 'rehearsal' ? ' (typed)' : ''} · {phase === 'connecting' ? 'Connecting…' : STATE_LABEL[agentState] ?? 'Live'}
         <button
           type="button"
           onClick={() => stop()}
@@ -47,6 +48,7 @@ export default function RossCallBar({ hidden, raised }: { hidden?: boolean; rais
           <span className="text-white/40">…</span>
         )}
       </p>
+      {mode === 'rehearsal' && <div className="mt-2"><RehearsalInput onSay={say} busy={agentState === 'thinking'} dark /></div>}
     </div>
   );
 }

@@ -103,6 +103,11 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome, 
               onStart={ross.start}
               onStop={ross.stop}
               onClose={closeRoss}
+              mode={ross.mode}
+              rehearsalAvailable={ross.rehearsalAvailable}
+              transcript={ross.transcript}
+              onRehearse={ross.startRehearsal}
+              onSay={ross.say}
             />
           ) : null
         }
