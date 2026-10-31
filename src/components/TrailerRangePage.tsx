@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import AiAssistantButton from './AiAssistantButton';
 import { RangeOverview } from './RangeOverview';
 import { RangeFinder } from './RangeFinder';
 import { RossPanel } from './RossPanel';
-import { useRoss } from '../hooks/useRoss';
+import { useRossContext } from '../hooks/RossContext';
 
 interface TrailerRangePageProps {
   onBackHome?: () => void;
@@ -24,8 +24,10 @@ const scrollTo = (id: string) =>
 export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome, rossRequest = 0, onRossShown }) => {
   // The orb starts voice Ross (Ultravox); the corner icon on every page is
   // the typed chat (RossChat, OpenAI).
-  const ross = useRoss();
-  const [rossOpen, setRossOpen] = useState(false);
+  // Ross himself lives at app level (RossContext) so a call carries on
+  // into the Trailer Builder.
+  const ross = useRossContext();
+  const { panelOpen: rossOpen, setPanelOpen: setRossOpen } = ross;
 
   const openRoss = () => {
     setRossOpen(true);

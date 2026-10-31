@@ -6,6 +6,8 @@ import { TrailerRangePage } from './components/TrailerRangePage';
 import { TrailerBuilderPage } from './components/TrailerBuilderPage';
 import { ExtremeFooter } from './components/ExtremeFooter';
 import RossChat from './components/RossChat';
+import RossCallBar from './components/RossCallBar';
+import { RossProvider } from './hooks/RossContext';
 
 type AppViewMode = 'svg-transitions' | 'task-manager' | 'split-view' | 'trailer-range' | 'trailer-builder';
 
@@ -74,6 +76,7 @@ export default function App() {
   };
 
   return (
+    <RossProvider navigate={handleRossNavigate}>
     <div className="min-h-screen bg-black text-white antialiased">
       {/* Menu Banner matching user-provided design */}
       <MenuBanner
@@ -148,6 +151,9 @@ export default function App() {
 
       {/* AI Ross chat, on every page */}
       <RossChat raised={viewMode === 'trailer-builder'} onNavigate={handleRossNavigate} />
+      {/* Voice Ross's call, wherever he has taken the customer */}
+      <RossCallBar hidden={viewMode === 'trailer-range'} raised={viewMode === 'trailer-builder'} />
     </div>
+    </RossProvider>
   );
 }

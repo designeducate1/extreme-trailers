@@ -10,6 +10,7 @@ import stainless from '../assets/categories/stainless-steel.jpg';
 import { findTrailer, CATEGORY_NAMES, type CategoryId } from '../data/trailers';
 import { findModel, FAMILIES, FAMILY_CATEGORY, builderLinkFor } from '../data/range';
 import type { RossPick } from '../hooks/useRoss';
+import { useRossContext } from '../hooks/RossContext';
 import { Trailer3DViewer } from './Trailer3DViewer';
 import { SeaTank, severity, seaLine, BAND_STYLE, SEA_BAND, LAUNCH_LIMITS, trailerBand, TRAILER_BAND_LABEL, hsToTop, type Wind } from './LaunchConditions';
 
@@ -114,6 +115,7 @@ export function CategoryTank({ id, name, wind, error }: { id: CategoryId; name: 
 export function RossPickCard({ pick }: { pick?: RossPick | null }) {
   // Voice Ross picks from the 2026 range (data/range.ts); older picks may
   // still be ids from the draft list in data/trailers.ts.
+  const { navigate } = useRossContext();
   const model = pick ? findModel(pick.trailerId) : undefined;
   const picked = pick && !model ? findTrailer(pick.trailerId) : undefined;
   if (model) {
@@ -141,7 +143,7 @@ export function RossPickCard({ pick }: { pick?: RossPick | null }) {
           </dl>
           {!model.roadLegal && <p className="mt-4 text-sm text-zinc-600">Launching trolley: not for road use.</p>}
           {link && (
-            <a href={link} className="mt-6 self-start px-5 py-2.5 rounded-full bg-[#13306b] text-white text-sm font-semibold hover:bg-[#0d2350]">
+            <a href={link} onClick={(e) => { e.preventDefault(); navigate(link); }} className="mt-6 self-start px-5 py-2.5 rounded-full bg-[#13306b] text-white text-sm font-semibold hover:bg-[#0d2350]">
               Build it in the Trailer Builder
             </a>
           )}

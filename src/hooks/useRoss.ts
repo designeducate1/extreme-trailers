@@ -60,7 +60,14 @@ export function useRoss() {
   // on screen when Ross recommends a trailer -- no call, no minutes used.
   useEffect(() => {
     if (!import.meta.env.DEV) return;
-    const id = new URLSearchParams(window.location.search).get('rossPreview');
+    const q = new URLSearchParams(window.location.search);
+    // ?rossCallPreview: pretend a call is running, to check the call bar.
+    if (q.has('rossCallPreview')) {
+      setPhase('live');
+      setAgentState('speaking');
+      setCaption({ speaker: 'agent', text: "Here's the Launcher 3 in the builder. Does that look about right for your dinghy?" });
+    }
+    const id = q.get('rossPreview');
     if (!id) return;
     setHighlighted(['roller', 'inflatable']);
     setPick({ trailerId: id, reason: 'Practice mode: this is how a recommendation from Ross will look.' });
