@@ -17,12 +17,15 @@ interface SvgMaskTransitionsProps {
   initialVariation?: VariationType;
   onOpenTaskManager?: () => void;
   onTrailerRangeClick?: () => void;
+  /** The AI.Assistant orb and Ask Ross: straight to voice Ross on the Trailer Range. */
+  onAskRoss?: () => void;
 }
 
 export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
   initialVariation = 'horizontal-blinds',
   onOpenTaskManager,
   onTrailerRangeClick,
+  onAskRoss,
 }) => {
   const [variation, setVariation] = useState<VariationType>(initialVariation);
   const [blindCount, setBlindCount] = useState<number>(30);
@@ -859,7 +862,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
 
           {/* Launch AI Trailer Builder: animated AI.Assistant orb. */}
           <div className="w-full flex justify-center">
-            <AiAssistantButton onClick={onTrailerRangeClick} />
+            <AiAssistantButton onClick={onAskRoss ?? onTrailerRangeClick} />
           </div>
         </div>
       </BuildTrailerReveal>
@@ -870,7 +873,7 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
           from the nav's TRAILER RANGE item. Text copy here is placeholder,
           to be replaced. */}
       <section id="next-random-grid" className="relative z-20 w-full showcase-wrap">
-        <ScrollRevealShowcase onAskRoss={onTrailerRangeClick} />
+        <ScrollRevealShowcase onAskRoss={onAskRoss ?? onTrailerRangeClick} />
       </section>
 
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AiAssistantButton from './AiAssistantButton';
 import { RangeOverview } from './RangeOverview';
 import { RangeFinder } from './RangeFinder';
@@ -7,6 +7,9 @@ import { useRoss } from '../hooks/useRoss';
 
 interface TrailerRangePageProps {
   onBackHome?: () => void;
+  /** Bumped by the homepage orb: open voice Ross and jump to him. */
+  rossRequest?: number;
+  onRossShown?: () => void;
 }
 
 // The dedicated Trailer Range page -- previously the configurator lived
@@ -18,7 +21,7 @@ interface TrailerRangePageProps {
 const scrollTo = (id: string) =>
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }) => {
+export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome, rossRequest = 0, onRossShown }) => {
   // The orb starts voice Ross (Ultravox); the corner icon on every page is
   // the typed chat (RossChat, OpenAI).
   const ross = useRoss();
@@ -29,6 +32,15 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome }
     ross.refresh();
     setTimeout(() => scrollTo('find-your-trailer'), 50);
   };
+  useEffect(() => {
+    if (!rossRequest) return;
+    onRossShown?.();
+    setRossOpen(true);
+    ross.refresh();
+    // Wait for the page to lay out, then jump (no long smooth scroll from the top).
+    setTimeout(() => document.getElementById('find-your-trailer')?.scrollIntoView({ block: 'start' }), 80);
+  }, [rossRequest]);
+
   const closeRoss = () => {
     ross.stop();
     setRossOpen(false);

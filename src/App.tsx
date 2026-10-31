@@ -53,6 +53,14 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Homepage AI.Assistant orb: open the Trailer Range with voice Ross's
+  // panel already open and in view, rather than at the top of the page.
+  const [rossRequest, setRossRequest] = useState(0);
+  const handleAskRoss = () => {
+    setViewMode('trailer-range');
+    setRossRequest((n) => n + 1);
+  };
+
   const handleFooterNav = (action: string) => {
     if (action === 'HOME') {
       setViewMode('svg-transitions');
@@ -89,6 +97,7 @@ export default function App() {
             initialVariation={activeVariation}
             onOpenTaskManager={handleOpenTaskManager}
             onTrailerRangeClick={handleGoToTrailerRange}
+            onAskRoss={handleAskRoss}
           />
         )}
 
@@ -98,6 +107,8 @@ export default function App() {
 
         {viewMode === 'trailer-range' && (
           <TrailerRangePage
+            rossRequest={rossRequest}
+            onRossShown={() => setRossRequest(0)}
             onBackHome={() => {
               setViewMode('svg-transitions');
               window.scrollTo({ top: 0, behavior: 'smooth' });
