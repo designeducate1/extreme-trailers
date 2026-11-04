@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import DepthCarousel, { type DepthCarouselItem } from './DepthCarousel';
+import { OceanLaunchPanel } from './OceanLaunchPanel';
 import './ScrollRevealShowcase.css';
 
 // "Walk with Ross" clips. Each has a short chapter label and a still
@@ -257,6 +258,9 @@ export const ScrollRevealShowcase: React.FC<Props> = ({ onAskRoss }) => {
 
         <div className="spacer" />
       </div>
+
+      {/* Live ocean launch-conditions panel — Elfouhaily FFT simulation */}
+      <OceanLaunchPanel />
 
       {/* Portalled to <body>: inside the page's stacked sections it would sit
           under the site's fixed nav whatever its z-index. */}
