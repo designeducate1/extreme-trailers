@@ -366,10 +366,10 @@ export const TrailerBuilderPage: React.FC = () => {
   const ready = loaded >= N * 2;
 
   return (
-    <div className="relative z-20 w-full min-h-screen bg-white text-zinc-900 font-sf lg:grid lg:grid-cols-[1fr_420px]">
+    <div className="relative z-20 w-full min-h-screen bg-white text-zinc-900 font-sf grid [grid-template-areas:'head'_'view'_'body'] lg:[grid-template-areas:'view_head'_'view_body'] lg:grid-cols-[1fr_420px]">
 
-      {/* Mobile only: tabs + title shown ABOVE the 3D viewer */}
-      <div className="lg:hidden px-6 pt-8 pb-5 border-b border-zinc-100">
+      {/* HEAD: tabs + title. Row 1 on mobile (above viewer), top of right column on desktop. */}
+      <div className="[grid-area:head] px-6 sm:px-8 pt-8 pb-5 border-b border-zinc-100 lg:border-b-0 lg:border-l lg:border-zinc-200">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#13306b]">Trailer Builder</p>
         <div className="mt-3 grid grid-cols-2 gap-1 p-1 rounded-full bg-zinc-100" role="tablist" aria-label="Product">
           {PRODUCTS.map((p) => (
@@ -379,12 +379,12 @@ export const TrailerBuilderPage: React.FC = () => {
             </button>
           ))}
         </div>
-        <h1 className="mt-5 text-3xl font-bold tracking-tighter">{product.title}</h1>
+        <h1 className="mt-6 text-3xl sm:text-4xl font-bold tracking-tighter">{product.title}</h1>
         <p className="mt-2 text-zinc-500">{product.blurb}</p>
       </div>
 
-      {/* The trailer */}
-      <div className="relative bg-[#f4f5f7] lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] flex flex-col justify-center">
+      {/* VIEW: 3D turntable. Row 2 on mobile, full left column on desktop (sticky). */}
+      <div className="[grid-area:view] relative bg-[#f4f5f7] lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] flex flex-col justify-center">
         <div className="relative w-full cursor-grab active:cursor-grabbing touch-pan-y select-none outline-none focus-visible:ring-2 focus-visible:ring-[#12306b]"
           tabIndex={0} role="img"
           aria-label={`${model.name} with ${colourName(0)} ${product.parts[0].short.toLowerCase()} and ${colourName(1)} ${product.parts[1].short.toLowerCase()}. Drag or use the arrow keys to turn it.`}
@@ -416,23 +416,8 @@ export const TrailerBuilderPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Options */}
-      <div className="px-6 sm:px-8 pt-6 pb-32 lg:pt-8 lg:pb-12 lg:border-l lg:border-zinc-200">
-        {/* Desktop only: tabs + title (on mobile these appear above the viewer) */}
-        <div className="hidden lg:block">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#13306b]">Trailer Builder</p>
-          <div className="mt-3 grid grid-cols-2 gap-1 p-1 rounded-full bg-zinc-100" role="tablist" aria-label="Product">
-            {PRODUCTS.map((p) => (
-              <button key={p.id} type="button" role="tab" aria-selected={p.id === productId} onClick={() => switchProduct(p.id)}
-                className={`h-10 rounded-full text-sm font-semibold transition-colors ${p.id === productId ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-800'}`}>
-                {p.tab}
-              </button>
-            ))}
-          </div>
-          <h1 className="mt-6 text-3xl sm:text-4xl font-bold tracking-tighter">{product.title}</h1>
-          <p className="mt-2 text-zinc-500">{product.blurb}</p>
-        </div>
-
+      {/* BODY: model selector + colour + extras + summary. Row 3 on mobile, bottom of right column on desktop. */}
+      <div className="[grid-area:body] px-6 sm:px-8 pt-6 pb-32 lg:pt-4 lg:pb-12 lg:border-l lg:border-zinc-200">
         <Section title="Model" value={gbp(model.priceIncVat)}>
           <div className="space-y-2.5" role="radiogroup">
             {product.models.map((t) => {
