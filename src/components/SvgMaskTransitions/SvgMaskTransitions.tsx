@@ -101,8 +101,9 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
     stageCtxRef.current = gsap.context(() => {
 
     const svgNS = 'http://www.w3.org/2000/svg';
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const layersBox = stage.querySelector<HTMLElement>('.layers');
+    const width = layersBox?.clientWidth || window.innerWidth;
+    const height = layersBox?.clientHeight || window.innerHeight;
 
     // Texts setup
     const textEls = stage.querySelectorAll<HTMLElement>('.txt');

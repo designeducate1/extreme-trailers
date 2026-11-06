@@ -59,6 +59,13 @@ body { -webkit-text-size-adjust: 100%; }
   overflow: hidden;
 }
 
+/* Phones: intro screen is a 16:9 window instead of full height */
+@media (max-width: 639px) {
+  .layers {
+    height: calc(100vw * 9 / 16);
+  }
+}
+
 .layer {
   position: absolute;
   inset: 0;
