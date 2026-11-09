@@ -164,7 +164,7 @@ export const UltraWaterCluster: React.FC = () => {
                 <iframe ref={inlineRef} onLoad={() => send(inlineRef.current)} src={SCENE_SRC} title="Live slipway and water simulation" className="absolute inset-0 w-full h-full border-0" allow="fullscreen" />
               ) : (
                 <>
-                  <img src="/ultra-water-poster.jpg" alt="The Lepe slipway running into the Solent" className="absolute inset-0 w-full h-full object-cover" />
+                  <img src="/ultra-water-poster.jpg" alt="Low over the Solent, looking along a slipway and its timber piles" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
                   <div className="absolute inset-0 grid place-items-center">
                     <button type="button" onClick={() => setLive(true)}
