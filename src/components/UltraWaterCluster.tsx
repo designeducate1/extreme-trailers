@@ -93,7 +93,7 @@ export const UltraWaterCluster: React.FC = () => {
   const nextLabel = tide.rising ? `Next high water ${hhmm(tide.nextHigh)}` : `Next low water ${hhmm(tide.nextLow)}`;
 
   return (
-    <section className="relative z-20 w-full bg-[#eef2f8] text-zinc-900 font-sf px-5 sm:px-8 py-20 sm:py-28" aria-labelledby="uw-title">
+    <section className="relative z-20 w-full pointer-events-auto bg-[#eef2f8] text-zinc-900 font-sf px-5 sm:px-8 py-20 sm:py-28" aria-labelledby="uw-title">
       <div className="max-w-[1120px] mx-auto">
         <div className="text-center mb-10 sm:mb-14">
           <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: NAVY }}>Live launch conditions</p>
