@@ -44,7 +44,8 @@ async function cacheSet(key: string, body: unknown, ms: number) {
 // Oceanforecast only answers for points at sea. For a place on land we look
 // for the nearest sea point (two small rings around it) and remember it for a
 // week -- the coastline doesn't move -- so normally this is one request.
-async function oceanAt(lat: number, lon: number): Promise<any | null> {
+type OceanPt = { det: any; series: any[] };
+async function oceanAt(lat: number, lon: number): Promise<OceanPt | null> {
   const r = await fetch(`https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=${lat}&lon=${lon}`, {
     headers: { 'User-Agent': UA },
   });
@@ -55,15 +56,15 @@ async function oceanAt(lat: number, lon: number): Promise<any | null> {
   const now = Date.now();
   const cur = ts.reduce((b, t) => (Math.abs(Date.parse(t.time) - now) < Math.abs(Date.parse(b.time) - now) ? t : b), ts[0]);
   const det = cur?.data?.instant?.details || {};
-  return typeof det.sea_surface_wave_height === 'number' ? det : null;
+  return typeof det.sea_surface_wave_height === 'number' ? { det, series: ts } : null;
 }
 async function seaFor(lat: number, lon: number) {
   const ptKey = `seapt:${lat},${lon}`;
   let pt: any = await cacheGet(ptKey);
   if (pt && pt.none) return null;
   if (pt) {
-    const det = await oceanAt(pt.lat, pt.lon);
-    if (det) return { det, pt };
+    const o = await oceanAt(pt.lat, pt.lon);
+    if (o) return { det: o.det, series: o.series, pt };
   }
   const cands: [number, number][] = [[lat, lon]];
   for (const d of [0.05, 0.12]) {
@@ -73,8 +74,8 @@ async function seaFor(lat: number, lon: number) {
     }
   }
   for (const [la, lo] of cands) {
-    const det = await oceanAt(la, lo);
-    if (det) { await cacheSet(ptKey, { lat: la, lon: lo }, 7 * 86400e3); return { det, pt: { lat: la, lon: lo } }; }
+    const o = await oceanAt(la, lo);
+    if (o) { await cacheSet(ptKey, { lat: la, lon: lo }, 7 * 86400e3); return { det: o.det, series: o.series, pt: { lat: la, lon: lo } }; }
   }
   await cacheSet(ptKey, { none: true }, 7 * 86400e3);
   return null;
@@ -112,7 +113,7 @@ export default async (req: Request) => {
   const lat = +(+(url.searchParams.get('lat') || 'NaN')).toFixed(2); // ~1km grid -> better cache sharing
   const lon = +(+(url.searchParams.get('lon') || 'NaN')).toFixed(2);
   if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return json({ error: 'coords' }, 400, 0);
-  const key = `wind2:${lat},${lon}`;
+  const key = `wind3:${lat},${lon}`;
   const hit = await cacheGet(key);
   if (hit) return json(hit);
 
@@ -129,7 +130,34 @@ export default async (req: Request) => {
   const gust = typeof det.wind_speed_of_gust === 'number' ? det.wind_speed_of_gust * MPH : null;
   let sea: any = null;
   try { sea = await seaFor(lat, lon); } catch { sea = null; }
+  const nearest = (series: any[], t: number) =>
+    series.reduce((b, x) => (Math.abs(Date.parse(x.time) - t) < Math.abs(Date.parse(b.time) - t) ? x : b), series[0]);
+  const next = cur?.data?.next_1_hours || cur?.data?.next_6_hours;
+  // seven noon-UTC forecast points (the "this week" tabs), from the very same two MET feeds
+  const midnight = new Date(); midnight.setUTCHours(0, 0, 0, 0);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const t = midnight.getTime() + i * 86400e3 + 12 * 3600e3;
+    const w = nearest(ts, t), wd = w?.data?.instant?.details || {};
+    const o = sea?.series?.length ? nearest(sea.series, t)?.data?.instant?.details : null;
+    const nx = w?.data?.next_6_hours || w?.data?.next_1_hours;
+    days.push({
+      time: new Date(t).toISOString(),
+      windMph: +(wd.wind_speed * MPH).toFixed(1),
+      dirDeg: wd.wind_from_direction,
+      cloudPct: wd.cloud_area_fraction ?? null,
+      symbol: nx?.summary?.symbol_code ?? null,
+      precipMm: nx?.details?.precipitation_amount ?? null,
+      waveM: o && typeof o.sea_surface_wave_height === 'number' ? +o.sea_surface_wave_height.toFixed(1) : null,
+      waveDirDeg: o && typeof o.sea_surface_wave_from_direction === 'number' ? o.sea_surface_wave_from_direction : null,
+    });
+  }
   const body = {
+    cloudPct: det.cloud_area_fraction ?? null,
+    symbol: next?.summary?.symbol_code ?? null,
+    precipMm: next?.details?.precipitation_amount ?? null,
+    waveDirDeg: sea && typeof sea.det.sea_surface_wave_from_direction === 'number' ? sea.det.sea_surface_wave_from_direction : null,
+    days,
     windMph: +(det.wind_speed * MPH).toFixed(1),
     gustMph: gust === null ? null : +gust.toFixed(1), // MET Norway only gives gusts in the Nordic area
     dirDeg: det.wind_from_direction,

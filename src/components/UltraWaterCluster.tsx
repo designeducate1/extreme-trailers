@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useWind, DEFAULT_PLACE, beaufort, seaHs, seaState, bandFor, BAND_STYLE } from './LaunchConditions';
 
@@ -71,6 +71,14 @@ export const UltraWaterCluster: React.FC = () => {
   const [now, setNow] = useState(() => Date.now());
   const [live, setLive] = useState(false);
   const [full, setFull] = useState(false);
+  const inlineRef = useRef<HTMLIFrameElement>(null);
+  const fullRef = useRef<HTMLIFrameElement>(null);
+
+  // Hand the scene the exact reading this card shows, so the card, the HUD and the wave simulation share one source.
+  const send = useCallback((el: HTMLIFrameElement | null) => {
+    if (el?.contentWindow && wind) el.contentWindow.postMessage({ type: 'et-wind', wind }, window.location.origin);
+  }, [wind]);
+  useEffect(() => { send(inlineRef.current); send(fullRef.current); }, [send, live, full]);
 
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 30000); return () => clearInterval(t); }, []);
   useEffect(() => {
@@ -110,7 +118,7 @@ export const UltraWaterCluster: React.FC = () => {
               {wind && style ? (
                 <p className="mt-1.5 text-[15px]">
                   <span className="font-semibold" style={{ color: style.hex }}>{style.label}</span>
-                  <span className="text-zinc-600"> · Force {beaufort(wind.windMph)} {compass(wind.dirDeg)} · {Math.round(wind.windMph)} mph</span>
+                  <span className="text-zinc-600"> · Force {beaufort(wind.windMph)} {compass(wind.dirDeg)} · {Math.round(wind.windMph)} mph · {hhmm(Date.parse(wind.time))}</span>
                 </p>
               ) : (
                 <p className="mt-1.5 text-[15px] text-zinc-500">{error ? 'Live data unavailable right now.' : 'Reading the sea…'}</p>
@@ -153,7 +161,7 @@ export const UltraWaterCluster: React.FC = () => {
 
             <div className="relative flex-1 min-h-[360px] sm:min-h-[460px] bg-zinc-900 overflow-hidden">
               {live && !full ? (
-                <iframe src={SCENE_SRC} title="Live slipway and water simulation" className="absolute inset-0 w-full h-full border-0" allow="fullscreen" />
+                <iframe ref={inlineRef} onLoad={() => send(inlineRef.current)} src={SCENE_SRC} title="Live slipway and water simulation" className="absolute inset-0 w-full h-full border-0" allow="fullscreen" />
               ) : (
                 <>
                   <img src="/ultra-water-poster.jpg" alt="The Lepe slipway running into the Solent" className="absolute inset-0 w-full h-full object-cover" />
@@ -183,7 +191,7 @@ export const UltraWaterCluster: React.FC = () => {
 
       {full && createPortal(
         <div className="fixed inset-0 z-[10000] bg-black" role="dialog" aria-modal="true" aria-label="Live water, full screen">
-          <iframe src={SCENE_SRC} title="Live slipway and water simulation, full screen" className="absolute inset-0 w-full h-full border-0" allow="fullscreen" />
+          <iframe ref={fullRef} onLoad={() => send(fullRef.current)} src={SCENE_SRC} title="Live slipway and water simulation, full screen" className="absolute inset-0 w-full h-full border-0" allow="fullscreen" />
           <button type="button" onClick={() => setFull(false)} aria-label="Close full screen"
             className="absolute right-4 top-4 h-11 px-5 rounded-full bg-white text-zinc-900 font-semibold shadow-xl hover:-translate-y-px transition-transform">
             Close ✕

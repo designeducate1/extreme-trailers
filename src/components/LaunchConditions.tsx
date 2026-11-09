@@ -34,7 +34,7 @@ export async function geocode(q: string): Promise<Place | null> {
   return r.json();
 }
 
-const cacheKey = (p: Place) => `et-wind3:${p.lat.toFixed(3)},${p.lon.toFixed(3)}`;
+const cacheKey = (p: Place) => `et-wind4:${p.lat.toFixed(3)},${p.lon.toFixed(3)}`;
 const CACHE_MS = 15 * 60 * 1000;
 
 export function useWind(place: Place) {
