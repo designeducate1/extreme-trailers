@@ -1,3 +1,4 @@
+import heroLogo from '../../assets/extreme-logo-hero.png';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import BuildTrailerReveal from '../BuildTrailerReveal';
 import gsap from 'gsap';
@@ -755,10 +756,9 @@ export const SvgMaskTransitions: React.FC<SvgMaskTransitionsProps> = ({
             className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none px-4 -translate-y-[2vh] sm:-translate-y-[3vh]"
           >
             <img
-              src="https://i.postimg.cc/MTzH11pF/Extreme-logo.png"
+              src={heroLogo}
               alt="Extreme Logo"
-              referrerPolicy="no-referrer"
-              className="w-full max-w-[420px] sm:max-w-[500px] md:max-w-[580px] lg:max-w-[665px] xl:max-w-[750px] 2xl:max-w-[800px] h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.95)] -translate-y-[20%]"
+              className="w-full max-w-[420px] sm:max-w-[500px] md:max-w-[580px] lg:max-w-[665px] xl:max-w-[750px] 2xl:max-w-[800px] h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.95)] -translate-y-[20%] -translate-x-[3%]"
             />
 
             {/* Brand + location eyebrow, same pattern as Peter Leonard Marine's hero -- real

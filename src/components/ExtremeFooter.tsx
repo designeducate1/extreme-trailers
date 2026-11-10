@@ -34,7 +34,7 @@ const YouTubeIcon = () => (
 
 export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
   return (
-    <footer className="w-full font-sans-ui" style={{ backgroundColor: '#111111' }}>
+    <footer className="w-full font-sans-ui" style={{ backgroundColor: '#1e5bd8' }}>
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
 
@@ -43,7 +43,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
             <p className="font-editorial text-sm tracking-widest uppercase text-white leading-snug">
               Extreme Trailers
             </p>
-            <p className="text-xs text-white/40 mt-1 tracking-wide">Southampton · Hampshire</p>
+            <p className="text-xs text-white/75 mt-1 tracking-wide">Southampton · Hampshire</p>
           </div>
 
           {/* Centre: nav links separated by mid-dots */}
@@ -51,12 +51,12 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
             {NAV_LINKS.map((link, i) => (
               <React.Fragment key={link.action}>
                 {i > 0 && (
-                  <span className="text-white/20 text-xs px-2 hidden sm:inline" aria-hidden="true">·</span>
+                  <span className="text-white/50 text-xs px-2 hidden sm:inline" aria-hidden="true">·</span>
                 )}
                 <button
                   type="button"
                   onClick={() => onNavClick?.(link.action)}
-                  className="text-left text-sm sm:text-xs text-white/60 hover:text-white transition-colors duration-200 cursor-pointer py-2.5 sm:py-0"
+                  className="text-left text-sm sm:text-xs text-white/85 hover:text-white transition-colors duration-200 cursor-pointer py-2.5 sm:py-0"
                 >
                   {link.label}
                 </button>
@@ -72,7 +72,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Extreme Trailers on Facebook"
-                className="text-white/40 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
+                className="text-white/75 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
               >
                 <FacebookIcon />
               </a>
@@ -81,7 +81,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Extreme Trailers on Instagram"
-                className="text-white/40 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
+                className="text-white/75 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
               >
                 <InstagramIcon />
               </a>
@@ -90,14 +90,14 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Extreme Trailers on YouTube"
-                className="text-white/40 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
+                className="text-white/75 hover:text-white transition-colors duration-200 p-2.5 -m-2.5 sm:p-0 sm:m-0"
               >
                 <YouTubeIcon />
               </a>
             </div>
             <div className="text-left md:text-right">
               <p className="text-sm sm:text-xs font-semibold text-white">Call us: 02380 000 000</p>
-              <p className="text-xs text-white/40 mt-0.5">Email: sales@extreme-trailers.co.uk</p>
+              <p className="text-xs text-white/75 mt-0.5">Email: sales@extreme-trailers.co.uk</p>
             </div>
           </div>
 
@@ -105,11 +105,11 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
       </div>
 
       {/* Bottom copyright strip */}
-      <div className="border-t border-white/10 py-3">
-        <p className="text-center text-xs text-white/20">
+      <div className="border-t border-white/20 py-3">
+        <p className="text-center text-xs text-white/65">
           © {new Date().getFullYear()} Extreme Trailers Ltd. All rights reserved.
         </p>
-        <p className="mt-1 text-center text-[10px] text-white/20">
+        <p className="mt-1 text-center text-[10px] text-white/60">
           Weather data: <a href="https://www.met.no/en" target="_blank" rel="noopener" className="hover:text-white/50">MET Norway</a>
           {' '}· Place search © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" className="hover:text-white/50">OpenStreetMap contributors</a>
         </p>
