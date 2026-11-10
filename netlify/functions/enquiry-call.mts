@@ -30,7 +30,7 @@ export default async (req: Request) => {
 
   recent.set(ip, Date.now());
   const out = await createEnquiryCall(enq, false);
-  if ('success' in out && out.mode === 'test') return json({ joinUrl: out.joinUrl });
+  if ('success' in out && out.mode === 'test') return json({ joinUrl: out.joinUrl, via: out.via });
   if ('skipped' in out) return json({ error: out.reason, message: out.detail || 'Could not start the call.' }, 502);
   return json({ error: 'unexpected', message: 'Could not start the call.' }, 502);
 };
