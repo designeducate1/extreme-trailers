@@ -52,7 +52,7 @@ export default async (req: Request) => {
   //    we carry on: the customer's enquiry has still been received by the server.
   let stored = true;
   try {
-    const store = getStore('enquiries');
+    const store = getStore({ name: 'enquiries', consistency: 'strong' });
     const existing: any = await store.get(FEED_KEY, { type: 'json' });
     await store.setJSON(FEED_KEY, { enquiries: [record, ...((existing && existing.enquiries) || [])].slice(0, MAX_ENQUIRIES) });
   } catch (e) {

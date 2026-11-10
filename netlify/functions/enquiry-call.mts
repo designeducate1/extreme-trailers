@@ -22,7 +22,7 @@ export default async (req: Request) => {
 
   let enq: any = null;
   try {
-    const feed: any = await getStore('enquiries').get('feed', { type: 'json' });
+    const feed: any = await getStore({ name: 'enquiries', consistency: 'strong' }).get('feed', { type: 'json' });
     enq = ((feed && feed.enquiries) || []).find((e: any) => e.id === id);
   } catch { /* storage unavailable */ }
   if (!enq) return json({ error: 'not_found', message: 'We could not find that enquiry.' }, 404);
