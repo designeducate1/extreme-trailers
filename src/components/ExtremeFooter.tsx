@@ -96,7 +96,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
               </a>
             </div>
             <div className="text-left md:text-right">
-              <p className="text-sm sm:text-xs font-semibold text-white">Call us: 02380 000 000</p>
+              <p className="text-sm sm:text-xs font-semibold text-white">Call us: 02380 632535</p>
               <p className="text-xs text-white/75 mt-0.5 whitespace-nowrap">Email: sales@extreme-trailers.co.uk</p>
             </div>
           </div>

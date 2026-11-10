@@ -165,12 +165,12 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
           {/* Desktop: phone number + search, at the right of the bar */}
           <div className="hidden lg:flex items-center gap-3 flex-shrink-0 pl-3">
             <a
-              href="tel:+442380000000"
+              href="tel:+442380632535"
               className="hidden xl:flex items-center gap-2 text-white font-bold text-[13px] tracking-[0.04em] whitespace-nowrap hover:text-white/80 transition-colors"
               style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.7a2 2 0 01-.5 2.1L8.1 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.4c.9.3 1.8.6 2.7.7a2 2 0 011.7 2z" /></svg>
-              02380 000 000
+              02380 632535
             </a>
             <button
                 type="button"
@@ -309,7 +309,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
             {activeModal === 'CONTACT' && (
               <div className="text-xs text-neutral-700 space-y-2">
                 <p><strong>Southampton Headquarters:</strong></p>
-                <p>Direct Sales & Support: 02380 000 000</p>
+                <p>Direct Sales & Support: 02380 632535</p>
                 <p>Email: sales@extreme-trailers.co.uk</p>
                 <p>Unit 2, Premier Park, Southampton, Hampshire, UK</p>
               </div>
