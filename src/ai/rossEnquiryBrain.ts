@@ -1,7 +1,9 @@
 // AI Ross's follow-up call about a website enquiry. The same design as the follow-up call built for another
-// Extreme-style client site: the call opens by saying who is calling and why, anchors on what the customer
+// client site: the call opens by saying who is calling and why, anchors on what the customer
 // actually wrote, asks natural qualifying questions, never invents a price, and speaks plain English.
-// Used by netlify/functions/enquiry.mts (test mode: a browser call; live mode: a Twilio phone call).
+// The instructions live in the Ultravox dashboard agent "Ross" as a template (npm run sync-ross-agent writes it there);
+// each call only fills in the customer's details (templateContext) and the personalised greeting. Used by
+// netlify/functions/enquiry*.mts (test mode: a browser call; live mode: a Twilio phone call).
 
 import { MODELS, FAMILIES, findModel } from '../data/range';
 import { rangeListText } from './rossBrain';
@@ -32,20 +34,32 @@ export function matchModels(text: string, limit = 4) {
   return fam.flatMap((f) => MODELS.filter((m) => m.family === f.id)).slice(0, limit);
 }
 
-export function enquiryInstructions(e: EnquiryForCall): string {
+/** What each call fills into the agent's template. Empty strings switch the optional sections off. */
+export function enquiryTemplateContext(e: EnquiryForCall) {
   const matches = matchModels(`${e.trailerOfInterest ?? ''} ${e.message}`);
-  const matchText = matches.length
-    ? `\n\nTRAILERS THAT MATCH WHAT THEY MENTIONED (real models from the list; refer to them naturally by name):\n` +
-      matches.map((m) => `- ${m.name}: boats up to ${m.maxBoatM} m, ${m.capacityKg} kg capacity, ${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}`).join('\n')
-    : '';
   const known = findModel(e.trailerOfInterest ?? '')?.name;
+  return {
+    customerName: e.name,
+    customerFirstName: firstName(e.name),
+    trailerOfInterest: known ?? e.trailerOfInterest ?? '',
+    enquiryMessage: e.message,
+    matchedModels: matches
+      .map((m) => `- ${m.name}: boats up to ${m.maxBoatM} m, ${m.capacityKg} kg capacity, ${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}`)
+      .join('\n'),
+  };
+}
 
+/**
+ * The agent's system prompt, as a mustache template ({{{x}}} = unescaped value). This is the text that goes into the
+ * dashboard agent; once it is there, editing it in the dashboard changes how Ross behaves on every enquiry call.
+ */
+export function enquiryPromptTemplate(): string {
   return `
 You are "AI Ross", calling a customer back by phone from Extreme Trailers, who build boat trailers in Southampton, UK. Your tone is warm, plain-spoken and helpful, like a knowledgeable person who builds trailers for a living.
 You are an AI. Your voice is based on Ross, the owner, but you are not him. If anyone asks whether you are a real person, say clearly that you are an AI assistant calling on behalf of the Extreme team.
 
 WHY YOU'RE CALLING
-${e.name} sent an enquiry through the website${e.trailerOfInterest ? ` about: ${known ?? e.trailerOfInterest}` : ''}. Their message said: "${e.message}"
+{{{customerName}}} sent an enquiry through the website{{#trailerOfInterest}} about: {{{trailerOfInterest}}}{{/trailerOfInterest}}. Their message said: "{{{enquiryMessage}}}"
 
 YOUR GOAL THIS CALL
 Confirm what they actually need, then ask a few natural qualifying questions, ONE at a time, skipping anything they've already told you:
@@ -60,7 +74,12 @@ STRICT RULES
 - Never invent a price. Only if asked, say it is "from" the RRP on the list, including VAT, and that the team will confirm. If you don't know something (stock, delivery dates, finance), say so and say the team will confirm.
 - If nothing on the list fits (for example boats over 6.75 m or over 2,850 kg), say so honestly and say the team can advise or build bespoke.
 - Speak in short, plain British English: one or two sentences at a time. No markdown, no links, no lists read aloud. Say product names naturally.
-- This is a short call, a few minutes at most.${matchText}
+- This is a short call, a few minutes at most.
+{{#matchedModels}}
+
+TRAILERS THAT MATCH WHAT THEY MENTIONED (real models from the list; refer to them naturally by name):
+{{{matchedModels}}}
+{{/matchedModels}}
 
 TRAILERS YOU MAY RECOMMEND (Extreme's 2026 range)
 ${rangeListText()}
