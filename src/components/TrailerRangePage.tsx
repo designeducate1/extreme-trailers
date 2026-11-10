@@ -56,19 +56,24 @@ export const TrailerRangePage: React.FC<TrailerRangePageProps> = ({ onBackHome, 
         {/* Background: a car reversing a boat down a slipway, softly blurred
             under a pale wash so the heading and copy stay easy to read. */}
         <video
-          className="absolute inset-0 -z-10 w-full h-full object-cover scale-110 blur-[6px]"
+          className="absolute inset-0 -z-10 w-full h-full object-cover scale-110 blur-[6px] saturate-[1.6] contrast-[1.05]"
           src="/videos/slipway-bg.mp4"
           poster="/videos/posters/slipway-bg.jpg"
           autoPlay muted loop playsInline preload="metadata" aria-hidden="true"
         />
-        <div className="absolute inset-0 -z-10 bg-[#eef2f8]/70" aria-hidden="true" />
+        <div className="absolute inset-0 -z-10 bg-[#eef2f8]/52" aria-hidden="true" />
+        {/* a gentle navy-to-gold tint so the footage reads warmer and richer, and a soft pale veil behind the copy so the text stays easy to read */}
+        <div className="absolute inset-0 -z-10" aria-hidden="true"
+          style={{ background: 'linear-gradient(180deg, rgba(6,46,105,0.12) 0%, rgba(30,91,216,0.05) 45%, rgba(232,184,75,0.12) 100%)' }} />
+        <div className="absolute inset-0 -z-10" aria-hidden="true"
+          style={{ background: 'radial-gradient(ellipse 52% 58% at 50% 50%, rgba(238,242,248,0.62) 0%, rgba(238,242,248,0.30) 62%, rgba(238,242,248,0) 100%)' }} />
         <div className="relative max-w-4xl mx-auto flex flex-col items-center justify-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tighter text-zinc-900 font-sf mb-5 leading-[1.05]">
             Matched To Your Boat.
             <br />
             Built To Last.
           </h2>
-          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-600 font-normal tracking-normal font-sf leading-relaxed mb-12">
+          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-zinc-700 font-normal tracking-normal font-sf leading-relaxed mb-12">
             Every Extreme is built in Southampton. Let AI Ross ask a few quick questions, what you tow, where you launch, beach or slip and show you the exact trailer to buy.
           </p>
           <div className="w-full flex justify-center">
