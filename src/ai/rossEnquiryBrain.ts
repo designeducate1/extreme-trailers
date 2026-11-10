@@ -34,18 +34,22 @@ export function matchModels(text: string, limit = 4) {
   return fam.flatMap((f) => MODELS.filter((m) => m.family === f.id)).slice(0, limit);
 }
 
-/** What each call fills into the agent's template. Empty strings switch the optional sections off. */
+/**
+ * What each call fills into the agent's template: plain text slots only (Ultravox reads mustache sections as objects,
+ * so the optional pieces are built here and are simply empty when not needed).
+ */
 export function enquiryTemplateContext(e: EnquiryForCall) {
   const matches = matchModels(`${e.trailerOfInterest ?? ''} ${e.message}`);
-  const known = findModel(e.trailerOfInterest ?? '')?.name;
+  const interest = findModel(e.trailerOfInterest ?? '')?.name ?? e.trailerOfInterest ?? '';
   return {
     customerName: e.name,
     customerFirstName: firstName(e.name),
-    trailerOfInterest: known ?? e.trailerOfInterest ?? '',
+    trailerPhrase: interest ? ` about: ${interest}` : '',
     enquiryMessage: e.message,
-    matchedModels: matches
-      .map((m) => `- ${m.name}: boats up to ${m.maxBoatM} m, ${m.capacityKg} kg capacity, ${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}`)
-      .join('\n'),
+    matchedBlock: matches.length
+      ? `\n\nTRAILERS THAT MATCH WHAT THEY MENTIONED (real models from the list; refer to them naturally by name):\n` +
+        matches.map((m) => `- ${m.name}: boats up to ${m.maxBoatM} m, ${m.capacityKg} kg capacity, ${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}`).join('\n')
+      : '',
   };
 }
 
@@ -59,7 +63,7 @@ You are "AI Ross", calling a customer back by phone from Extreme Trailers, who b
 You are an AI. Your voice is based on Ross, the owner, but you are not him. If anyone asks whether you are a real person, say clearly that you are an AI assistant calling on behalf of the Extreme team.
 
 WHY YOU'RE CALLING
-{{{customerName}}} sent an enquiry through the website{{#trailerOfInterest}} about: {{{trailerOfInterest}}}{{/trailerOfInterest}}. Their message said: "{{{enquiryMessage}}}"
+{{{customerName}}} sent an enquiry through the website{{{trailerPhrase}}}. Their message said: "{{{enquiryMessage}}}"
 
 YOUR GOAL THIS CALL
 Confirm what they actually need, then ask a few natural qualifying questions, ONE at a time, skipping anything they've already told you:
@@ -75,11 +79,7 @@ STRICT RULES
 - If nothing on the list fits (for example boats over 6.75 m or over 2,850 kg), say so honestly and say the team can advise or build bespoke.
 - Speak in short, plain British English: one or two sentences at a time. No markdown, no links, no lists read aloud. Say product names naturally.
 - This is a short call, a few minutes at most.
-{{#matchedModels}}
-
-TRAILERS THAT MATCH WHAT THEY MENTIONED (real models from the list; refer to them naturally by name):
-{{{matchedModels}}}
-{{/matchedModels}}
+{{{matchedBlock}}}
 
 TRAILERS YOU MAY RECOMMEND (Extreme's 2026 range)
 ${rangeListText()}
