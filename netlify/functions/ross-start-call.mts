@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { rossInstructions, ROSS_GREETING, ROSS_TOOLS } from '../../src/ai/rossBrain';
+import { resolveRossVoice } from '../../src/ai/rossVoice';
 
 const env = (k: string, fallback = '') => (process.env[k] ?? fallback).trim();
 
@@ -65,8 +66,10 @@ export default async (req: Request) => {
       },
     })),
   };
-  const voice = env('ROSS_VOICE');
-  if (voice) body.voice = voice;
+  // Ross's own cloned voice is essential: never start a call in a default voice.
+  const voice = await resolveRossVoice(key);
+  if (!voice) return json({ ...status, error: 'no-voice', message: "Ross's voice isn't available in this Ultravox account, so the call was not started." }, 503);
+  body.voice = voice;
 
   try {
     const r = await fetch('https://api.ultravox.ai/api/calls', {

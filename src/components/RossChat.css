@@ -133,7 +133,10 @@
 
 .ross-chat__messages {
   flex: 1;
+  min-height: 0;                 /* lets a flex child shrink so it scrolls instead of growing past the panel */
   overflow-y: auto;
+  overscroll-behavior: contain;  /* scrolling the chat doesn't scroll the page behind it */
+  -webkit-overflow-scrolling: touch;
   padding: 18px 16px;
   display: flex;
   flex-direction: column;

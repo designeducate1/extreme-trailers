@@ -1,5 +1,6 @@
 // Server-side only (imported by netlify/functions/enquiry*.mts): creates AI Ross's follow-up call at Ultravox,
 // from the dashboard agent "Ross" (voice, model and instructions are managed there).
+import { resolveRossVoice } from './rossVoice';
 import { enquiryTemplateContext, enquiryGreeting, enquiryPromptTemplate, type EnquiryForCall } from './rossEnquiryBrain';
 
 const env = (k: string, fallback = '') => (process.env[k] ?? fallback).trim();
@@ -68,8 +69,9 @@ export async function createEnquiryCall(enq: EnquiryForCall, live: boolean): Pro
       url = 'https://api.ultravox.ai/api/calls';
       const text = enquiryPromptTemplate().replace(/\{\{\{(\w+)\}\}\}/g, (_m, k: string) => (ctx as Record<string, string>)[k] ?? '');
       body = { ...common, systemPrompt: text };
-      const voice = env('ROSS_VOICE');
-      if (voice) body.voice = voice;
+      const voice = await resolveRossVoice(key);
+      if (!voice) return { skipped: true, reason: 'agent_not_found', detail: "Ross's voice isn't available in this Ultravox account." };
+      body.voice = voice;
     }
     const via = found.id ? ('agent' as const) : ('fallback' as const);
     const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', 'X-API-Key': key }, body: JSON.stringify(body) });

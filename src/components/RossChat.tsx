@@ -133,7 +133,7 @@ export default function RossChat({ raised, onNavigate }: Props) {
           </button>
         </header>
 
-        <div className="ross-chat__messages" ref={list} aria-live="polite">
+        <div className="ross-chat__messages" ref={list} aria-live="polite" data-lenis-prevent>
           {fresh && <div className="ross-chat__msg ross-chat__msg--bot">{GREETING}</div>}
           {history.map((m, i) => (
             <div key={i} className={`ross-chat__msg ross-chat__msg--${m.role}`}>{render(m.text, go)}</div>
