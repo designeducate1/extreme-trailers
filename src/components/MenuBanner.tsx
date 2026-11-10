@@ -72,7 +72,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#1e5bd8] text-white border-b border-white/15 select-none">
+      <header className="sticky top-0 z-50 w-full bg-[#062e69] text-white border-b border-white/15 select-none">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center">
           {/* Extreme Marine Logo placed in top left of banner */}
           <div className="flex-shrink-0 flex items-center pr-2 sm:pr-4">
@@ -169,7 +169,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
         {/* Phone / tablet: drop-down menu */}
         <div
           id="phone-menu"
-          className={`lg:hidden absolute left-0 right-0 top-full bg-[#1e5bd8] border-b border-white/15 shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ${menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}
+          className={`lg:hidden absolute left-0 right-0 top-full bg-[#062e69] border-b border-white/15 shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ${menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}
         >
           <nav className="px-4 py-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             {NAV_ITEMS.map((item, index) => (

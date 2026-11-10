@@ -34,7 +34,7 @@ const YouTubeIcon = () => (
 
 export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
   return (
-    <footer className="w-full font-sans-ui" style={{ backgroundColor: '#1e5bd8' }}>
+    <footer className="w-full font-sans-ui" style={{ backgroundColor: '#062e69' }}>
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
 
