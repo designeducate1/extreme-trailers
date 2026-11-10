@@ -547,15 +547,15 @@ body { -webkit-text-size-adjust: 100%; }
   --p-x: 5px;
   --p-y: 3px;
   --w-label: 130px;
-  --color-secondary: #062e69;
-  --color-pure: #062e69;
-  --muted: rgba(6, 46, 105, 0.15);
+  --color-secondary: #ffffff;
+  --color-pure: #ffffff;
+  --muted: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   padding: var(--p-y) var(--p-x);
   position: relative;
-  background: #ffffff;
-  border: 1px solid rgba(6, 46, 105, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--round);
   max-width: 100%;
   overflow-x: auto;
@@ -564,7 +564,7 @@ body { -webkit-text-size-adjust: 100%; }
   z-index: 10;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 @media (max-width: 1200px) {
@@ -604,7 +604,7 @@ body { -webkit-text-size-adjust: 100%; }
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   font-weight: 800;
-  color: #062e69;
+  color: #ffffff;
   background: transparent;
   padding: 7px 4px;
   width: var(--w-label);
@@ -622,7 +622,7 @@ body { -webkit-text-size-adjust: 100%; }
   -webkit-tap-highlight-color: transparent;
   text-transform: uppercase;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  opacity: 0.8;
+  opacity: 0.68;
 }
 
 @media (max-width: 1200px) {
@@ -659,13 +659,13 @@ body { -webkit-text-size-adjust: 100%; }
 }
 
 .banner-nav-wrap input[class*="rd-"]:checked + .label {
-  color: #062e69;
+  color: #ffffff;
   opacity: 1;
   font-weight: 900;
 }
 
 .banner-nav-wrap .label:hover {
-  color: #062e69;
+  color: #ffffff;
   opacity: 1;
 }
 
@@ -692,8 +692,8 @@ body { -webkit-text-size-adjust: 100%; }
   position: absolute;
   height: 3px;
   width: 100%;
-  background: #062e69;
-  box-shadow: 0 0 6px rgba(6, 46, 105, 0.35), 0 0 12px rgba(6, 46, 105, 0.18);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
 
 .banner-nav-wrap .bar::before {
@@ -714,10 +714,10 @@ body { -webkit-text-size-adjust: 100%; }
   height: calc(100% - (var(--p-y) * 2));
   width: var(--w-label);
   border-radius: calc(var(--round) - var(--p-y));
-  background: rgba(6, 46, 105, 0.08);
-  border: 1px solid rgba(6, 46, 105, 0.18);
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(4px);
-  box-shadow: 0 0 12px rgba(6, 46, 105, 0.08);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.06);
   transform-origin: 0 0 0;
   z-index: 0;
   pointer-events: none;

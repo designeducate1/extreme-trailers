@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import bannerLogo from '../assets/extreme-logo-banner.png';
+import bannerLogo from '../assets/extreme-logo-white.png';
 
 interface MenuBannerProps {
   onHomeClick?: () => void;
@@ -72,7 +72,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white text-zinc-900 shadow-xs border-b border-zinc-200 select-none">
+      <header className="sticky top-0 z-50 w-full bg-[#111111] text-white border-b border-white/10 select-none">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center">
           {/* Extreme Marine Logo placed in top left of banner */}
           <div className="flex-shrink-0 flex items-center pr-2 sm:pr-4">
@@ -89,7 +89,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
               <img
                 src={bannerLogo}
                 alt="Extreme Marine Logo"
-                className="h-[31.5px] sm:h-[36px] md:h-[45px] w-auto max-w-[124px] sm:max-w-[168px] md:max-w-[208px] object-contain group-hover:scale-105 transition-all"
+                className="h-[40px] sm:h-[48px] md:h-[56px] w-auto object-contain group-hover:scale-105 transition-transform duration-300"
               />
             </button>
           </div>
@@ -155,7 +155,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
               aria-expanded={menuOpen}
               aria-controls="phone-menu"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              className="w-11 h-11 -mr-1 flex items-center justify-center rounded-full text-[#13306b] active:bg-zinc-100 cursor-pointer"
+              className="w-11 h-11 -mr-1 flex items-center justify-center rounded-full text-white active:bg-white/10 cursor-pointer"
             >
               <span className="relative block w-6 h-4" aria-hidden="true">
                 <span className={`absolute left-0 w-6 h-[2.5px] rounded-full bg-current transition-all duration-300 ${menuOpen ? 'top-[7px] rotate-45' : 'top-0'}`} />
@@ -169,7 +169,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
         {/* Phone / tablet: drop-down menu */}
         <div
           id="phone-menu"
-          className={`lg:hidden absolute left-0 right-0 top-full bg-white border-b border-zinc-200 shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ${menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}
+          className={`lg:hidden absolute left-0 right-0 top-full bg-[#111111] border-b border-white/10 shadow-lg overflow-hidden transition-[max-height,opacity] duration-300 ${menuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}
         >
           <nav className="px-4 py-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             {NAV_ITEMS.map((item, index) => (
@@ -182,7 +182,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
                   setMenuOpen(false);
                   handleNavClick(item.action);
                 }}
-                className={`w-full text-left py-3.5 px-2 border-b border-zinc-100 last:border-0 text-[15px] font-bold tracking-wide cursor-pointer ${selectedIndex === index ? 'text-[#13306b]' : 'text-zinc-700'}`}
+                className={`w-full text-left py-3.5 px-2 border-b border-white/10 last:border-0 text-[15px] font-bold tracking-wide cursor-pointer ${selectedIndex === index ? 'text-white' : 'text-white/60'}`}
               >
                 {item.label}
               </button>
@@ -191,7 +191,7 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
         </div>
       </header>
       {menuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/30" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/50" onClick={() => setMenuOpen(false)} aria-hidden="true" />
       )}
 
       {/* Info / Modal popup for non-scrolling menu tabs */}
