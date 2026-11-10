@@ -8,9 +8,9 @@ import { MODELS, FAMILIES, FAMILY_CATEGORY } from '../data/range';
 export const ROSS_GREETING =
   "Hi, I'm AI Ross from Extreme Trailers, an AI assistant with a voice based on Ross's. I'll ask a few quick questions to find your trailer. What are you looking to tow?";
 
-export function rossInstructions(): string {
-  // The full 2026 range (data/range.ts), grouped by family.
-  const list = FAMILIES.map((f) => {
+/** The full 2026 range (data/range.ts), grouped by family, as text for Ross's prompts. */
+export function rangeListText(): string {
+  return FAMILIES.map((f) => {
     const rows = MODELS.filter((m) => m.family === f.id).map((m) =>
       `  - id "${m.id}": ${m.name}. Boat up to ${m.maxBoatM} m and ${m.capacityKg} kg (boat, engine and kit); ` +
       `${m.grossKg} kg gross, ${m.grossKg > 750 ? 'braked' : 'unbraked'}; ${m.supports ?? '-'} supports; ` +
@@ -18,6 +18,10 @@ export function rossInstructions(): string {
     ).join('\n');
     return `${f.name} (category "${FAMILY_CATEGORY[f.id]}"): ${f.blurb}\n${rows}`;
   }).join('\n\n');
+}
+
+export function rossInstructions(): string {
+  const list = rangeListText();
 
   return `
 You are "AI Ross", the voice assistant on the Extreme Trailers website. Extreme Trailers builds boat trailers in Southampton, UK.

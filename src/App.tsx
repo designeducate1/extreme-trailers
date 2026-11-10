@@ -4,19 +4,20 @@ import { TaskManager } from './components/TaskManager/TaskManager';
 import { MenuBanner } from './components/MenuBanner';
 import { TrailerRangePage } from './components/TrailerRangePage';
 import { TrailerBuilderPage } from './components/TrailerBuilderPage';
+import { EnquiryPage } from './components/EnquiryPage';
 import { ExtremeFooter } from './components/ExtremeFooter';
 import RossChat from './components/RossChat';
 import RossCallBar from './components/RossCallBar';
 import { RossProvider } from './hooks/RossContext';
 
-type AppViewMode = 'svg-transitions' | 'task-manager' | 'split-view' | 'trailer-range' | 'trailer-builder';
+type AppViewMode = 'svg-transitions' | 'task-manager' | 'split-view' | 'trailer-range' | 'trailer-builder' | 'enquiry';
 
 export default function App() {
   // ?builder opens the Trailer Builder directly (the AR QR code links a
   // phone to the same build this way); ?range opens the Trailer Range.
   const viewFromUrl = (): AppViewMode => {
     const q = new URLSearchParams(window.location.search);
-    return q.has('builder') ? 'trailer-builder' : q.has('range') ? 'trailer-range' : 'svg-transitions';
+    return q.has('builder') ? 'trailer-builder' : q.has('range') ? 'trailer-range' : q.has('enquire') ? 'enquiry' : 'svg-transitions';
   };
   const [viewMode, setViewMode] = useState<AppViewMode>(viewFromUrl);
   // Remounts the builder when Ross links to a different model or product.
@@ -63,8 +64,15 @@ export default function App() {
     setRossRequest((n) => n + 1);
   };
 
+  const goEnquiry = () => {
+    setViewMode('enquiry');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleFooterNav = (action: string) => {
-    if (action === 'HOME') {
+    if (action === 'CONTACT') {
+      goEnquiry();
+    } else if (action === 'HOME') {
       setViewMode('svg-transitions');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (action === 'TRAILER RANGE') {
@@ -90,8 +98,9 @@ export default function App() {
           setViewMode('trailer-builder');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        onContactClick={goEnquiry}
         onOpenTaskManager={handleOpenTaskManager}
-        currentPage={viewMode === 'svg-transitions' ? 'home' : viewMode === 'trailer-range' || viewMode === 'trailer-builder' ? viewMode : undefined}
+        currentPage={viewMode === 'svg-transitions' ? 'home' : viewMode === 'enquiry' ? 'contact' : viewMode === 'trailer-range' || viewMode === 'trailer-builder' ? viewMode : undefined}
       />
 
       {/* Main View Router - starts with Extreme logo panel */}
@@ -121,6 +130,8 @@ export default function App() {
         )}
 
         {viewMode === 'trailer-builder' && <TrailerBuilderPage key={builderKey} />}
+
+        {viewMode === 'enquiry' && <EnquiryPage />}
 
         {viewMode === 'split-view' && (
           <div className="grid grid-cols-1 xl:grid-cols-2 divide-y xl:divide-y-0 xl:divide-x divide-white/10 min-h-screen">

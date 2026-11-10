@@ -11,7 +11,7 @@ interface MenuBannerProps {
   /** Open an in-site link such as /?builder&product=... (from the search panel). */
   onNavigateHref?: (href: string) => void;
   /** The page on show, so the highlight follows other routes there (e.g. the AI Assistant orb). */
-  currentPage?: 'home' | 'trailer-range' | 'trailer-builder';
+  currentPage?: 'home' | 'trailer-range' | 'trailer-builder' | 'contact';
 }
 
 const NAV_ITEMS = [
