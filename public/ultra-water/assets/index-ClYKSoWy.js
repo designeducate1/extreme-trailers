@@ -5877,7 +5877,7 @@ void main() {
   --hud-font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif}
 #hud-bar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:120;display:flex;gap:8px}
 .hud-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--hud-line);
-  background:var(--hud-bg);backdrop-filter:blur(10px);color:var(--hud-navy);font:600 12px/1 var(--hud-font);cursor:pointer;
+  background:var(--hud-bg);backdrop-filter:blur(10px);color:var(--hud-navy);font:600 12px/1 var(--hud-font);cursor:pointer;white-space:nowrap;
   box-shadow:0 4px 14px rgba(15,31,61,.14);transition:background .15s}
 .hud-pill:hover{background:#fff}
 .hud-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--hud-good)}
