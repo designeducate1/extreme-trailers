@@ -80,6 +80,7 @@ export default function App() {
     <div className="min-h-screen bg-black text-white antialiased">
       {/* Menu Banner matching user-provided design */}
       <MenuBanner
+        onNavigateHref={handleRossNavigate}
         onHomeClick={() => {
           setViewMode('svg-transitions');
           window.scrollTo({ top: 0, behavior: 'smooth' });

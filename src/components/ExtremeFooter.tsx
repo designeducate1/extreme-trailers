@@ -34,29 +34,29 @@ const YouTubeIcon = () => (
 
 export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
   return (
-    <footer className="w-full font-sans-ui" style={{ backgroundColor: '#062e69' }}>
+    <footer className="w-full" style={{ backgroundColor: '#062e69', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
 
           {/* Left: brand identity — mirrors PLM's "Peter Leonard Marine / Newhaven · East Sussex" */}
-          <div className="flex-shrink-0 min-w-[190px]">
-            <p className="font-editorial text-sm tracking-widest uppercase text-white leading-snug">
+          <div className="flex-shrink-0 min-w-[170px]">
+            <p className="text-[13px] font-extrabold tracking-[0.12em] uppercase text-white leading-snug">
               Extreme Trailers
             </p>
-            <p className="text-xs text-white/75 mt-1 tracking-wide">Southampton · Hampshire</p>
+            <p className="text-[11px] font-semibold text-white/75 mt-1 tracking-[0.1em] uppercase">Southampton · Hampshire</p>
           </div>
 
           {/* Centre: nav links separated by mid-dots */}
-          <nav className="grid grid-cols-2 gap-x-6 sm:flex sm:flex-wrap sm:items-center sm:gap-y-2 sm:justify-center">
+          <nav className="grid grid-cols-2 gap-x-6 sm:flex sm:flex-wrap sm:items-center sm:gap-y-2 sm:justify-center sm:gap-x-0">
             {NAV_LINKS.map((link, i) => (
               <React.Fragment key={link.action}>
                 {i > 0 && (
-                  <span className="text-white/50 text-xs px-2 hidden sm:inline" aria-hidden="true">·</span>
+                  <span className="text-white/50 text-xs px-1 hidden sm:inline" aria-hidden="true">·</span>
                 )}
                 <button
                   type="button"
                   onClick={() => onNavClick?.(link.action)}
-                  className="text-left text-sm sm:text-xs text-white/85 hover:text-white transition-colors duration-200 cursor-pointer py-2.5 sm:py-0"
+                  className="text-left text-[13px] sm:text-[11px] font-extrabold uppercase tracking-[0.04em] text-white/85 hover:text-white whitespace-nowrap transition-colors duration-200 cursor-pointer py-2.5 sm:py-0"
                 >
                   {link.label}
                 </button>
@@ -65,7 +65,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
           </nav>
 
           {/* Right: social icons + contact — mirrors PLM's "Call us / Email us" block */}
-          <div className="flex flex-col items-start md:items-end gap-3 min-w-[190px]">
+          <div className="flex flex-col items-start md:items-end gap-3 min-w-[170px]">
             <div className="flex items-center gap-6 sm:gap-4">
               <a
                 href="https://www.facebook.com"
@@ -97,7 +97,7 @@ export const ExtremeFooter: React.FC<ExtremeFooterProps> = ({ onNavClick }) => {
             </div>
             <div className="text-left md:text-right">
               <p className="text-sm sm:text-xs font-semibold text-white">Call us: 02380 000 000</p>
-              <p className="text-xs text-white/75 mt-0.5">Email: sales@extreme-trailers.co.uk</p>
+              <p className="text-xs text-white/75 mt-0.5 whitespace-nowrap">Email: sales@extreme-trailers.co.uk</p>
             </div>
           </div>
 

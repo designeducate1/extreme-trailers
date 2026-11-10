@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import bannerLogo from '../assets/extreme-logo-white.png';
+import { SiteSearch } from './SiteSearch';
 
 interface MenuBannerProps {
   onHomeClick?: () => void;
@@ -7,6 +8,8 @@ interface MenuBannerProps {
   onTrailerBuilderClick?: () => void;
   onContactClick?: () => void;
   onOpenTaskManager?: () => void;
+  /** Open an in-site link such as /?builder&product=... (from the search panel). */
+  onNavigateHref?: (href: string) => void;
   /** The page on show, so the highlight follows other routes there (e.g. the AI Assistant orb). */
   currentPage?: 'home' | 'trailer-range' | 'trailer-builder';
 }
@@ -27,12 +30,24 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
   onTrailerRangeClick,
   onTrailerBuilderClick,
   onContactClick,
+  onNavigateHref,
   currentPage,
 }) => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // '/' opens the search from anywhere on the page (unless typing in a field).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement?.tagName) || '')) { e.preventDefault(); setSearchOpen(true); }
+      if (e.key === 'Escape') setSearchOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
 
   // Close the phone menu on Escape, and stop the page scrolling behind it.
   useEffect(() => {
@@ -147,8 +162,40 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
             </nav>
           </div>
 
+          {/* Desktop: phone number + search, at the right of the bar */}
+          <div className="hidden lg:flex items-center gap-3 flex-shrink-0 pl-3">
+            <a
+              href="tel:+442380000000"
+              className="hidden xl:flex items-center gap-2 text-white font-bold text-[13px] tracking-[0.04em] whitespace-nowrap hover:text-white/80 transition-colors"
+              style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.7a2 2 0 01-.5 2.1L8.1 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.4c.9.3 1.8.6 2.7.7a2 2 0 011.7 2z" /></svg>
+              02380 000 000
+            </a>
+            <button
+                type="button"
+                onClick={() => setSearchOpen((o) => !o)}
+                aria-expanded={searchOpen}
+                aria-label="Search the site"
+                title="Search ( / )"
+                className="w-10 h-10 rounded-full bg-white/12 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+              </button>
+          </div>
+
           {/* Phone / tablet: menu button */}
-          <div className="lg:hidden ml-auto">
+          <div className="lg:hidden ml-auto flex items-center gap-1">
+            <button
+                type="button"
+                onClick={() => setSearchOpen((o) => !o)}
+                aria-expanded={searchOpen}
+                aria-label="Search the site"
+                title="Search ( / )"
+                className="w-10 h-10 rounded-full bg-white/12 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+              </button>
             <button
               type="button"
               onClick={() => setMenuOpen((o) => !o)}
@@ -189,6 +236,14 @@ export const MenuBanner: React.FC<MenuBannerProps> = ({
             ))}
           </nav>
         </div>
+        {searchOpen && <div className="fixed inset-0 z-[-1]" onClick={() => setSearchOpen(false)} aria-hidden="true" />}
+        <SiteSearch
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          goPage={(section) => { setSelectedIndex(NAV_ITEMS.findIndex((n) => n.action === section)); handleNavClick(section); }}
+          goRange={() => { setSelectedIndex(1); handleNavClick('TRAILER RANGE'); }}
+          goHref={(href) => onNavigateHref?.(href)}
+        />
       </header>
       {menuOpen && (
         <div className="lg:hidden fixed inset-0 z-40 bg-black/50" onClick={() => setMenuOpen(false)} aria-hidden="true" />
