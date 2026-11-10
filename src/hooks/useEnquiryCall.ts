@@ -16,7 +16,7 @@ export function useEnquiryCall() {
 
   useEffect(() => () => { session.current?.leaveCall(); }, []);
 
-  const start = useCallback(async (joinUrl: string) => {
+  const start = useCallback(async (getJoinUrl: () => Promise<string>) => {
     setLines([]);
     setPhase('asking-mic');
     try {
@@ -28,6 +28,7 @@ export function useEnquiryCall() {
     }
     setPhase('connecting');
     try {
+      const joinUrl = await getJoinUrl();
       const s = new UltravoxSession();
       session.current = s;
       s.addEventListener('status', () => {

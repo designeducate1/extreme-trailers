@@ -13,7 +13,7 @@ function rossDevHelper(): Plugin {
     name: 'ross-dev-helper',
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
-        const m = (req.url || '').match(/^\/\.netlify\/functions\/(ross-start-call|ross-chat|ross-rehearse|wind|enquiry)(\?.*)?$/);
+        const m = (req.url || '').match(/^\/\.netlify\/functions\/(ross-start-call|ross-chat|ross-rehearse|wind|enquiry-call|enquiry)(\?.*)?$/);
         if (!m) return next();
         try {
           // Read .env then .env.local fresh each time (later file wins)

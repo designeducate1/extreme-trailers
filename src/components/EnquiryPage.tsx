@@ -10,7 +10,7 @@ const NAVY = '#062e69';
 const FONT = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
 type Pref = 'email' | 'call';
-interface CallResult { success?: boolean; mode?: 'test' | 'live'; joinUrl?: string; skipped?: boolean; reason?: string }
+interface CallResult { success?: boolean; mode?: 'test' | 'live'; ready?: boolean; skipped?: boolean; reason?: string }
 
 const FIELD = 'w-full h-12 rounded-xl bg-white border border-zinc-300 px-4 text-[15px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-[#062e69] focus:ring-2 focus:ring-[#062e69]/20 transition';
 
@@ -21,11 +21,19 @@ const Field: React.FC<{ label: string; optional?: boolean; children: React.React
   </label>
 );
 
-function CallPanel({ joinUrl, name }: { joinUrl: string; name: string }) {
+function CallPanel({ enquiryId, name }: { enquiryId: string; name: string }) {
   const { phase, state, lines, start, end } = useEnquiryCall();
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => { endRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, [lines.length, lines[lines.length - 1]?.text]);
 
+  const [err, setErr] = useState('');
+  const getJoinUrl = async () => {
+    setErr('');
+    const r = await fetch('/.netlify/functions/enquiry-call', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ enquiryId }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.joinUrl) { setErr(d?.message || 'We could not start the call just now. Please try again in a moment.'); throw new Error('no-call'); }
+    return d.joinUrl as string;
+  };
   const live = phase === 'live' || phase === 'connecting';
   const status =
     phase === 'asking-mic' ? 'Waiting for your microphone…'
@@ -70,7 +78,7 @@ function CallPanel({ joinUrl, name }: { joinUrl: string; name: string }) {
 
         <div className="mt-5 flex flex-wrap items-center gap-3">
           {(phase === 'idle' || phase === 'mic-blocked' || phase === 'error') && (
-            <button type="button" onClick={() => start(joinUrl)}
+            <button type="button" onClick={() => start(getJoinUrl)}
               className="h-12 px-7 rounded-full text-white font-semibold hover:-translate-y-px transition-transform shadow-md cursor-pointer" style={{ background: NAVY }}>
               {phase === 'idle' ? 'Start the call' : 'Try again'}
             </button>
@@ -79,7 +87,7 @@ function CallPanel({ joinUrl, name }: { joinUrl: string; name: string }) {
             <button type="button" onClick={end} className="h-12 px-7 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors cursor-pointer">End call</button>
           )}
           {phase === 'mic-blocked' && <p className="text-sm text-red-700">Please allow the microphone in your browser&rsquo;s address bar, then try again.</p>}
-          {phase === 'error' && <p className="text-sm text-red-700">We couldn&rsquo;t connect the call just now.</p>}
+          {phase === 'error' && <p className="text-sm text-red-700">{err || 'We couldn’t connect the call just now.'}</p>}
           {phase === 'ended' && <p className="text-sm text-zinc-600">Thanks for talking to AI Ross. The Extreme team will confirm price and availability by email.</p>}
         </div>
       </div>
@@ -92,7 +100,7 @@ export const EnquiryPage: React.FC = () => {
   const [pref, setPref] = useState<Pref>('call');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [done, setDone] = useState<null | { call: CallResult | null }>(null);
+  const [done, setDone] = useState<null | { call: CallResult | null; enquiryId?: string }>(null);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF((p) => ({ ...p, [k]: e.target.value }));
 
   const submit = async (e: React.FormEvent) => {
@@ -108,14 +116,15 @@ export const EnquiryPage: React.FC = () => {
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) { setError(d?.error || 'Something went wrong sending your enquiry. Please try again.'); return; }
-      setDone({ call: d.call ?? null });
+      setDone({ call: d.call ?? null, enquiryId: d.enquiryId });
     } catch {
       setError('We couldn’t reach the server. Please check your connection and try again.');
     } finally { setBusy(false); }
   };
 
   const call = done?.call;
-  const testCall = call?.mode === 'test' && call.joinUrl;
+  const enquiryId = done?.enquiryId;
+  const testCall = call?.mode === 'test' && call.ready && enquiryId;
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-[#eef2f8] text-zinc-900" style={{ fontFamily: FONT }}>
@@ -172,11 +181,12 @@ export const EnquiryPage: React.FC = () => {
                 <p className="mt-3 text-zinc-600 text-lg">
                   {testCall ? 'AI Ross is ready to talk about your enquiry. Press Start below.'
                     : call?.mode === 'live' ? 'AI Ross is calling you now. Please keep your phone close.'
+                    : pref === 'call' && call?.reason === 'too_soon' ? 'We have your enquiry. A call from AI Ross was requested a moment ago, so please wait a minute before asking for another. The Extreme team will be in touch soon.'
                     : pref === 'call' ? 'We have your enquiry and the Extreme team will be in touch soon. AI Ross’s call isn’t available right now.'
                     : 'We have your enquiry and the Extreme team will be in touch by email soon.'}
                 </p>
               </div>
-              {testCall && <CallPanel joinUrl={call!.joinUrl!} name={f.name} />}
+              {testCall && <CallPanel enquiryId={enquiryId!} name={f.name} />}
               <div className="text-center mt-8">
                 <button type="button" onClick={() => { setDone(null); setF({ name: '', email: '', phone: '', trailer: '', message: '' }); }}
                   className="text-sm font-semibold underline underline-offset-4 cursor-pointer" style={{ color: NAVY }}>Send another enquiry</button>

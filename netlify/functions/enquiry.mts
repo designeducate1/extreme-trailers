@@ -14,71 +14,16 @@
 //                TWILIO_FROM_NUMBER (live mode only, E.164, linked to the Twilio account inside Ultravox).
 
 import { getStore } from '@netlify/blobs';
-import { enquiryInstructions, enquiryGreeting, type EnquiryForCall } from '../../src/ai/rossEnquiryBrain';
+import type { EnquiryForCall } from '../../src/ai/rossEnquiryBrain';
+import { createEnquiryCall, callsEnabled, liveMode } from '../../src/ai/rossEnquiryCall';
 
 const FEED_KEY = 'feed';
 const MAX_ENQUIRIES = 200;
-const env = (k: string, fallback = '') => (process.env[k] ?? fallback).trim();
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
 const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-
-// UK numbers as typed on a form ("07123 456789", "+44 7123 456789") -> strict E.164 for Twilio.
-function toE164UK(raw: string): string | null {
-  const d = raw.replace(/[^\d+]/g, '');
-  if (d.startsWith('+')) return d;
-  if (d.startsWith('0')) return '+44' + d.slice(1);
-  if (d.startsWith('44')) return '+' + d;
-  return null;
-}
-
-// A light brake on repeated calls from one place (per running instance; Ultravox's own plan limits are the real cap).
-const recent = new Map<string, number>();
-
-async function startCall(enq: EnquiryForCall, ip: string) {
-  const key = env('ULTRAVOX_API_KEY');
-  const enabled = env('ROSS_ENABLED', 'false').toLowerCase() === 'true';
-  if (!enabled || !key) return { skipped: true, reason: 'not_configured' as const };
-
-  const last = recent.get(ip) ?? 0;
-  if (Date.now() - last < 30_000) return { skipped: true, reason: 'too_soon' as const };
-
-  const from = env('TWILIO_FROM_NUMBER');
-  const live = !!from && !!enq.phone;
-  let to: string | null = null;
-  if (live) {
-    to = toE164UK(enq.phone!);
-    if (!to) return { skipped: true, reason: 'bad_phone_format' as const };
-  }
-
-  const body: Record<string, unknown> = {
-    systemPrompt: enquiryInstructions(enq),
-    maxDuration: `${Math.min(Number(env('ROSS_MAX_SECONDS', '240')) || 240, 600)}s`,
-    recordingEnabled: false,
-    joinTimeout: '300s',   // the customer needs time to press Start after sending the form (test mode)
-    firstSpeakerSettings: { agent: { text: enquiryGreeting(enq) } },
-    metadata: enq.id ? { enquiryId: String(enq.id) } : undefined,
-    medium: live ? { twilio: { outgoing: { to, from } } } : { webRtc: {} },
-  };
-  const voice = env('ROSS_VOICE');
-  if (voice) body.voice = voice;
-
-  try {
-    const r = await fetch('https://api.ultravox.ai/api/calls', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'X-API-Key': key },
-      body: JSON.stringify(body),
-    });
-    const data: any = await r.json().catch(() => ({}));
-    if (!r.ok) return { skipped: true, reason: 'ultravox_error' as const, detail: data?.detail || data?.message || `status ${r.status}` };
-    recent.set(ip, Date.now());
-    return live ? { success: true, mode: 'live' as const } : { success: true, mode: 'test' as const, joinUrl: data.joinUrl as string };
-  } catch {
-    return { skipped: true, reason: 'network' as const };
-  }
-}
 
 export default async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -116,10 +61,13 @@ export default async (req: Request) => {
   }
 
   // 2. Best-effort follow-up call, only if they asked for one.
+  //    LIVE: dial them now through Twilio.  TEST: nothing is created yet; the page asks for the call (enquiry-call)
+  //    when the person presses Start, so unused test calls never tie up Ultravox's limited simultaneous-call slots.
   let call: Record<string, unknown> | null = null;
   if (contactPreference === 'call') {
-    const ip = req.headers.get('x-nf-client-connection-ip') || req.headers.get('x-forwarded-for') || 'unknown';
-    call = await startCall(enq, ip);
+    if (!callsEnabled()) call = { skipped: true, reason: 'not_configured' };
+    else if (liveMode(enq.phone)) call = await createEnquiryCall(enq, true);
+    else call = { mode: 'test', ready: true };
   }
 
   return json({ success: true, enquiryId: enq.id, stored, call });
